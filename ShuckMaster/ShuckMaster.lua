@@ -1,16 +1,19 @@
 _addon.name     = 'ShuckMaster'
-_addon.author   = 'Bee (Staxxy)'
+_addon.author   = 'Bee'
 _addon.description = 'HorizonXI Summer clamming event bot.'
-_addon.version  = '0.5'
+_addon.version  = '0.7'
 _addon.commands = {'shuckmaster'}
 _addon.commands = {'shuck'}
 
 packets = require('packets')
 
 windower.send_command('lua load sellnpc')
+--windower.send_command('lua load fastcs')
+windower.send_command('lua load enternity')
 
 -- !!! WARNING !!!
 -- this sucks and is kinda broken lmfao GL
+-- requires sellnpc, fastcs, enternity
 
 --TODO:
 --cleanup dependency on sellnpc
@@ -30,9 +33,9 @@ CLAMMING_DELAY_SECONDS = 11
 REWARD_LOCK_DELAY = 5
 
 CLAMMING_POINT_LOCATION = {x = -306.9, y = -414.6, z = -0.14}
-CLAMMING_POINT_RADIUS = 2
-CLAMMING_NPC_LOCATION = {x =-370.656, y = -422.3, z = -1.4}
-CLAMMING_NPC_RADIUS = 1
+CLAMMING_POINT_RADIUS = 1
+CLAMMING_NPC_LOCATION = {x =-369.656, y = -421.3, z = -1.38}
+CLAMMING_NPC_RADIUS = 0.5
 MERCHANT_NPC_LOCATION = {x = -408.2, y = -447.4, z = -3.3}
 MERCHANT_NPC_RADIUS = 1
 
@@ -41,37 +44,37 @@ CHAT_COLOR = 208
 --TODO: add approximate AH value for non-merchant-sales
 CLAMMING_ITEM_DATA = {
 	[5122] = {name = "bibiki_slug", weight = 3, value = 5, action = ITEM_ACTION.SELL_TO_MERCHANT},
-	[4318] = {name = "bibiki_urchin", weight = 6, value = 750, action = ITEM_ACTION.SELL_ON_AH},
+	[4318] = {name = "bibiki_urchin", weight = 6, value = 750, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[485] = {name = "bkn_willow_rod", weight = 6, value = 0, action = ITEM_ACTION.TOSS},
-	[887] = {name = "coral_fragment", weight = 6, value = 1735, action = ITEM_ACTION.SELL_ON_AH},
+	[887] = {name = "coral_fragment", weight = 6, value = 3700, action = ITEM_ACTION.SELL_ON_AH},
 	[881] = {name = "crab_shell", weight = 6, value = 392, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[1193] = {name = "high_quality_crab_shell", weight = 6, value = 3132, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[5187] = {name = "elshimo_coconut", weight = 6, value = 44, action = ITEM_ACTION.SELL_TO_MERCHANT},
-	[690] = {name = "elm_log", weight = 6, value = 390, action = ITEM_ACTION.SELL_ON_AH},
+	[690] = {name = "elm_log", weight = 6, value = 2100, action = ITEM_ACTION.SELL_ON_AH},
 	[864] = {name = "fish_scales", weight = 3, value = 23, action = ITEM_ACTION.SELL_TO_MERCHANT},
-	[510] = {name = "goblin_armor", weight = 6, value = 0, action = ITEM_ACTION.SELL_ON_AH},
-	[507] = {name = "goblin_mail", weight = 6, value = 0, action = ITEM_ACTION.SELL_ON_AH},
-	[511] = {name = "goblin_mask", weight = 6, value = 0, action = ITEM_ACTION.SELL_ON_AH},
+	[510] = {name = "goblin_armor", weight = 6, value = 300, action = ITEM_ACTION.SELL_ON_AH},
+	[507] = {name = "goblin_mail", weight = 6, value = 1000, action = ITEM_ACTION.SELL_ON_AH},
+	[511] = {name = "goblin_mask", weight = 6, value = 700, action = ITEM_ACTION.SELL_ON_AH},
 	[4328] = {name = "hobgoblin_bread", weight = 6, value = 91, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[4325] = {name = "hobgoblin_pie", weight = 6, value = 153, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[5123] = {name = "jacknife", weight = 11, value = 20, action = ITEM_ACTION.SELL_TO_MERCHANT},
-	[1446] = {name = "lacquer_tree_log", weight = 6, value = 3578, action = ITEM_ACTION.SELL_ON_AH},
+	[1446] = {name = "lacquer_tree_log", weight = 6, value = 7000, action = ITEM_ACTION.SELL_ON_AH},
 	[691] = {name = "maple_log", weight = 6, value = 100, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[4361] = {name = "nebimonite", weight = 6, value = 53, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[1311] = {name = "oxblood", weight = 6, value = 13250, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[4468] = {name = "pamamas", weight = 6, value = 20, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[624] = {name = "pamtam_kelp", weight = 6, value = 7, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[17296] = {name = "pebble", weight = 7, value = 1, action = ITEM_ACTION.SELL_TO_MERCHANT},
-	[703] = {name = "petrified_log", weight = 6, value = 2193, action = ITEM_ACTION.SELL_ON_AH},
+	[703] = {name = "petrified_log", weight = 6, value = 5900, action = ITEM_ACTION.SELL_ON_AH},
 	[868] = {name = "pugil_scales", weight = 3, value = 23, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[1587] = {name = "high_quality_pugil_scales", weight = 6, value = 253, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[936] = {name = "rock_salt", weight = 6, value = 3, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[888] = {name = "seashell", weight = 6, value = 30, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[4484] = {name = "shall_shell", weight = 6, value = 307, action = ITEM_ACTION.SELL_TO_MERCHANT},
-	[1586] = {name = "titanictus_shell", weight = 6, value = 357, action = ITEM_ACTION.SELL_ON_AH},
+	[1586] = {name = "titanictus_shell", weight = 6, value = 1200, action = ITEM_ACTION.SELL_ON_AH},
 	[5124] = {name = "tropical_clam", weight = 20, value = 5100, action = ITEM_ACTION.SELL_TO_MERCHANT},
-	[885] = {name = "turtle_shell", weight = 6, value = 1190, action = ITEM_ACTION.SELL_ON_AH},
-	[1618] = {name = "uragnite_shell", weight = 6, value = 1455, action = ITEM_ACTION.SELL_ON_AH},
+	[885] = {name = "turtle_shell", weight = 6, value = 2000, action = ITEM_ACTION.SELL_ON_AH},
+	[1618] = {name = "uragnite_shell", weight = 6, value = 1455, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[5131] = {name = "vongola_clam", weight = 6, value = 192, action = ITEM_ACTION.SELL_TO_MERCHANT},
 	[1889] = {name = "white_sand", weight = 7, value = 250, action = ITEM_ACTION.SELL_TO_MERCHANT},
 }
@@ -111,17 +114,29 @@ MESSAGES = {
 	
 }
 
-state = {
-	keep_clamming = false,
-	bucket_weight = 0,
-	bucket_value = 0,
-	bucket_size = 0,
-	current_max_size = 0,
-	last_clam_gather_timestamp = 0,
-	action = BOT_ACTION.IDLE,
-	last_injection_time = 0,
-	last_reward_trigger_time = 0,
-}
+local function get_current_timestamp()
+	return os.time(os.date("!*t"))
+end
+
+local function new_state()
+	state = {
+		keep_clamming = false,
+		bucket_weight = 0,
+		bucket_value = 0,
+		bucket_size = 0,
+		bucket_contents = {},
+		value_this_session = 0,
+		current_max_size = 0,
+		last_clam_gather_timestamp = 0,
+		action = BOT_ACTION.IDLE,
+		last_injection_time = 0,
+		last_reward_trigger_time = 0,
+		total_value = 0,
+		clamming_start_time = get_current_timestamp(),
+		total_digs = 0,
+	}
+end
+new_state()
 
 local function press_key(key)
 	windower.send_command('setkey '..key..' down')
@@ -130,12 +145,26 @@ local function press_key(key)
 end
 
 local function message(message_text)
-	windower.add_to_chat(CHAT_COLOR,'[ShuckMaster] ' .. message_text)
+	windower.add_to_chat(CHAT_COLOR,'[' .. _addon.name .. '] ' .. message_text)
 end
 
-local function get_current_timestamp()
-	return os.time(os.date("!*t"))
+local function update_total_value()
+	message('Updating total value...')
+	for i,v in ipairs(state.bucket_contents) do
+		state.total_value = state.total_value + CLAMMING_ITEM_DATA[v].value
+	end
 end
+
+local function report_bucket()
+	local duration_in_seconds = get_current_timestamp() - state.clamming_start_time
+	local duration_string = ' | Duration: ' .. tostring(math.floor(10*duration_in_seconds/60)/10) .. ' min'
+	local total_digs_string = ' | Digs: ' .. tostring(state.total_digs)
+	local digs_per_min_string = ' | Digs/Min: ' .. tostring(math.floor(10*60*state.total_digs/duration_in_seconds)/10)
+	local value_string = ' | Tot. value: ' .. tostring(state.total_value)
+	local gil_per_hour_string = ' | Gil/Hr: ' .. tostring(math.floor(10*60*60*state.total_value/duration_in_seconds)/10)
+	message('weight: ' .. tostring(state.bucket_weight) .. '/' .. tostring(state.bucket_size) .. ' | bucket value: ' .. tostring(state.bucket_value) .. duration_string .. total_digs_string .. digs_per_min_string .. value_string .. gil_per_hour_string)
+end
+
 
 local function buy_bucket()
 	press_key('up')
@@ -184,11 +213,11 @@ end
 local function snap_to_point(target_xpos, target_ypos, target_zpos)
 	local my_mob_data = get_my_position_and_speed()	
 
-	local tolerance = 0.5 --tolerance between current and target position
+	local tolerance = 2 --tolerance between current and target position
 	
 	--amount of time to walk. 
 	--Coefficient < 1 guarantees convergence to target
-	local step_time = 0.75*tolerance/my_mob_data['speed'] 
+	local step_time = 1*tolerance/my_mob_data['speed']
 	
 	local delta = math.sqrt(math.pow(my_mob_data['x'] - target_xpos, 2) + math.pow(my_mob_data['y'] - target_ypos, 2))
 	while(state.keep_clamming and delta > tolerance) do
@@ -199,9 +228,8 @@ local function snap_to_point(target_xpos, target_ypos, target_zpos)
 			target_zpos - my_mob_data['z']
 		)
 		coroutine.sleep(step_time)
-		windower.ffxi.run(false)
 	end
-	
+	windower.ffxi.run(false)
 end
 
 --stolen from Sparks addon
@@ -246,7 +274,8 @@ local function inject_update_request()
 end
 
 local function gather_clams()
-	coroutine.sleep(6)
+	local interclam_interval = 1 + math.random() 
+	coroutine.sleep(interclam_interval)
 	-- --TODO: fix this logic, doesn't seem to work. 
 	-- local current_timestamp = get_current_timestamp()
 	-- if((current_timestamp - state.last_clam_gather_timestamp) < CLAMMING_DELAY_SECONDS) then
@@ -254,6 +283,8 @@ local function gather_clams()
 		-- coroutine.sleep(current_timestamp - state.last_clam_gather_timestamp + 1)
 	-- end
 	--validate distance from clamming point
+	
+	--windower.send_command('input /targetnpc') --superfluous, just to make my head move
 	if(state.keep_clamming) then 
 		mob_array = windower.ffxi.get_mob_array()
 		for i,v in pairs(mob_array) do
@@ -271,7 +302,7 @@ end
 
 local function talk_to_clamming_npc()
 	if(state.keep_clamming and ((get_current_timestamp() - state.last_reward_trigger_time) > REWARD_LOCK_DELAY)) then 
-		mob_array = windower.ffxi.get_mob_array()
+		local mob_array = windower.ffxi.get_mob_array()
 		for i,v in pairs(mob_array) do
 			if v['name'] == "Toh Zonikki" then
 				target_index = i
@@ -283,8 +314,9 @@ local function talk_to_clamming_npc()
 	end
 end
 
+--TODO: make this more efficient
 local function toss_willow_rods()
-	--TODO: make this more efficient
+	message('Tossing willow rods...')
 	local items = windower.ffxi.get_items()
 	for k,v in pairs(items.inventory) do
 		if(type(v) == "table" and v.id and v.id == 485) then
@@ -295,7 +327,7 @@ local function toss_willow_rods()
                     ["Inventory Index"] = k,
                 })
                 packets.inject(drop_packet)
-                coroutine.sleep(.5)
+                coroutine.sleep(1)
 		end
 	end
 	message('All willow rods tossed!')
@@ -304,6 +336,7 @@ end
 --TODO: Finish this
 local function sell_items_to_npc()
 	windower.send_command('sellnpc clamming');
+	local mob_array = windower.ffxi.get_mob_array()
 	coroutine.sleep(2)
 	for i,v in pairs(mob_array) do
 		if v['name'] == "Marcella" then
@@ -316,14 +349,14 @@ local function sell_items_to_npc()
 	poke_npc(target_id, target_index)
 	coroutine.sleep(2)
 	press_key('escape')
-	Message('Current Gil: ' .. tostring(windower.ffxi.get_items().gil))
+	report_bucket()
 end
 
 --hacky
 local function calculate_clamming_ev()
 	if(state.bucket_value < 2000 and state.bucket_weight <= (state.bucket_size - 7)) then 
 		return 1
-	elseif(state.bucket_value >= 10000 and state.bucket_weight > (state.bucket_size - 20)) then
+	elseif(state.bucket_value >= 5000 and state.bucket_weight > (state.bucket_size - 20)) then
 		return -1
 	elseif(state.bucket_value >= 2000 and state.bucket_weight < (state.bucket_size - 11)) then
 		return 1
@@ -332,13 +365,22 @@ local function calculate_clamming_ev()
 	end
 end
 
+local function report_bucket_contents()
+	local bucket_string = ''
+		for i,v in ipairs(state.bucket_contents) do
+			bucket_string = bucket_string .. tostring(v) .. ', '
+		end
+	message(bucket_string)
+end
+
 local function add_to_bucket(item)
 	local weight = CLAMMING_ITEM_DATA[item].weight
 	local value = CLAMMING_ITEM_DATA[item].value
 	if(weight ~= nil) then 
 		state.bucket_weight = state.bucket_weight + weight
 		state.bucket_value = state.bucket_value + value
-		message('weight: ' .. tostring(state.bucket_weight) .. '/' .. tostring(state.bucket_size) .. ' value: ' .. tostring(state.bucket_value))
+		table.insert(state.bucket_contents, item)
+		report_bucket()
 	else
 		message('Encountered unrecognized item ID ' .. item .. '. Stopping.')
 		stop_clamming_loop()
@@ -346,38 +388,48 @@ local function add_to_bucket(item)
 end
 
 local function reset_bucket()
+	message('Resetting bucket...')
 	state.bucket_weight = 0
 	state.bucket_value = 0
 	state.bucket_size = 0
+	state.bucket_contents = {}
 end
 
 local function start_clamming_loop()
+	windower.send_command('input /equip legs "Tarutaru Shorts +1"')
+	windower.send_command('input /equip body "Tarutaru Top +1"')
 	state.keep_clamming = true
 	if(state.action == BOT_ACTION.IDLE) then
 		message('Going to Toh Zonikki~')
 		local clamming_npc_location = get_random_point_on_circle(CLAMMING_NPC_LOCATION.x, 
 			CLAMMING_NPC_LOCATION.y, CLAMMING_NPC_LOCATION.z, CLAMMING_NPC_RADIUS)
 		snap_to_point(clamming_npc_location.x, clamming_npc_location.y, clamming_npc_location.z)
+		coroutine.sleep(1)
 		talk_to_clamming_npc()
 	elseif(state.action == BOT_ACTION.GATHERING) then
-			message('Going clamming (size:' .. tostring(state.bucket_size) .. ' weight:' .. tostring(state.bucket_weight) .. ")")
+			message('Going clamming')
+			report_bucket()
 		local clamming_point_location = get_random_point_on_circle(CLAMMING_POINT_LOCATION.x, 
 			CLAMMING_POINT_LOCATION.y, CLAMMING_POINT_LOCATION.z, CLAMMING_POINT_RADIUS)
 		snap_to_point(clamming_point_location.x, clamming_point_location.y, clamming_point_location.z)
+		coroutine.sleep(1)
 		gather_clams()
 	elseif(state.action == BOT_ACTION.SELLING) then
 		message('Going to merchant~')
 		local merchant_location = get_random_point_on_circle(MERCHANT_NPC_LOCATION.x, 
 			MERCHANT_NPC_LOCATION.y, MERCHANT_NPC_LOCATION.z, MERCHANT_NPC_RADIUS)
 		snap_to_point(merchant_location.x, merchant_location.y, merchant_location.z)
+		coroutine.sleep(2)
 		message('Selling to merchant~')
 		toss_willow_rods()
 		sell_items_to_npc()
+		coroutine.sleep(1)
 	elseif(state.action == BOT_ACTION.TALK_TO_TOH) then
 		message('Going to Toh Zonikki~')
 		local clamming_npc_location = get_random_point_on_circle(CLAMMING_NPC_LOCATION.x, 
 			CLAMMING_NPC_LOCATION.y, CLAMMING_NPC_LOCATION.z, CLAMMING_NPC_RADIUS)
 		snap_to_point(clamming_npc_location.x, clamming_npc_location.y, clamming_npc_location.z)
+		coroutine.sleep(1)
 		talk_to_clamming_npc()
 	else
 		stop_clamming_loop()
@@ -387,7 +439,7 @@ end
 
 local function stop_clamming_loop()
 	message('Stopping clamming loop!')
-	state.keep_clamming = false
+	new_state()
 end
 
 local function generate_mid_clamming_toh_action(npc_id, npc_index, menu_id)
@@ -400,10 +452,12 @@ local function generate_mid_clamming_toh_action(npc_id, npc_index, menu_id)
 			press_key('enter')
 			coroutine.sleep(2)
 			state.bucket_size = state.bucket_size + 50
-			message('Going clamming (size:' .. tostring(state.bucket_size) .. ' weight:' .. tostring(state.bucket_weight) .. ")")
+			message('Going clamming')
+			report_bucket()
 			local clamming_point_location = get_random_point_on_circle(CLAMMING_POINT_LOCATION.x, 
 			CLAMMING_POINT_LOCATION.y, CLAMMING_POINT_LOCATION.z, CLAMMING_POINT_RADIUS)
 			snap_to_point(clamming_point_location.x, clamming_point_location.y, clamming_point_location.z)
+			coroutine.sleep(1)
 			gather_clams()
 		elseif(state.bucket_size >= 150 and (state.bucket_size - state.bucket_weight) <= 5) then
 			coroutine.sleep(2)
@@ -437,11 +491,15 @@ windower.register_event('incoming chunk', function(id, data)
 	if(id == INCOMING_PACKETS.MESSAGE and state.keep_clamming) then 
 		local packet = packets.parse('incoming', data)
 		if(packet['Message ID'] == MESSAGES.GOT_CLAM) then
+			state.total_digs = state.total_digs + 1
+			--superfluous, just to make my head move
+			windower.send_command('input /targetnpc')
 			state.last_clam_gather_timestamp = get_current_timestamp()
 			add_to_bucket(packet['Param 1'])
 			local clamming_ev = calculate_clamming_ev()
 			if(clamming_ev > 0) then
 				state.action = BOT_ACTION.GATHERING
+				coroutine.sleep(6)
 				gather_clams()
 			else
 				state.action = BOT_ACTION.TALK_TO_TOH
@@ -449,6 +507,7 @@ windower.register_event('incoming chunk', function(id, data)
 				local clamming_npc_location = get_random_point_on_circle(CLAMMING_NPC_LOCATION.x, 
 			CLAMMING_NPC_LOCATION.y, CLAMMING_NPC_LOCATION.z, CLAMMING_NPC_RADIUS)
 				snap_to_point(clamming_npc_location.x, clamming_npc_location.y, clamming_npc_location.z)
+				coroutine.sleep(1)
 				talk_to_clamming_npc()
 			end
 			
@@ -457,17 +516,21 @@ windower.register_event('incoming chunk', function(id, data)
 			gather_clams()
 			
 		elseif(packet['Message ID'] == MESSAGES.BUCKET_BROKE) then
+			state.total_digs = state.total_digs + 1
 			state.action = BOT_ACTION.TALK_TO_TOH
+			reset_bucket()
 			message('Going to Toh Zonikki~')
 			local clamming_npc_location = get_random_point_on_circle(CLAMMING_NPC_LOCATION.x, 
 			CLAMMING_NPC_LOCATION.y, CLAMMING_NPC_LOCATION.z, CLAMMING_NPC_RADIUS)
 			snap_to_point(clamming_npc_location.x, clamming_npc_location.y, clamming_npc_location.z)
+			coroutine.sleep(1)
 			talk_to_clamming_npc()
-				
+		
+		--TODO: handle this the right way. Its also called at the end of clamming over when you hand bucket back
 		elseif(packet['Message ID'] == MESSAGES.GRANDPAPPY) then
 			state.action = BOT_ACTION.TALK_TO_TOH
-			reset_bucket()
-			coroutine.sleep(1)
+			message('Grandpappy...')
+			coroutine.sleep(2)
 			talk_to_clamming_npc()
 			
 		elseif(packet['Message ID'] == MESSAGES.REWARDED) then
@@ -475,13 +538,17 @@ windower.register_event('incoming chunk', function(id, data)
 			if(current_timestamp - state.last_reward_trigger_time) > REWARD_LOCK_DELAY then
 				state.last_reward_trigger_time = current_timestamp
 				state.action = BOT_ACTION.SELL_TO_MERCHANT
+				update_total_value()
 				reset_bucket()
 				message('Going to merchant~')
 				local merchant_location = get_random_point_on_circle(MERCHANT_NPC_LOCATION.x, 
 				MERCHANT_NPC_LOCATION.y, MERCHANT_NPC_LOCATION.z, MERCHANT_NPC_RADIUS)
 				snap_to_point(merchant_location.x, merchant_location.y, merchant_location.z)
+				coroutine.sleep(1)
 				message('Selling to merchant~')
+				toss_willow_rods()
 				sell_items_to_npc()
+				coroutine.sleep(1)
 				state.action = BOT_ACTION.IDLE
 				start_clamming_loop()
 			end
@@ -509,16 +576,18 @@ windower.register_event('incoming chunk', function(id, data)
 			
 		elseif(packet['Menu ID'] == DIALOGUE.TOH_START_CLAMMING_MENU and packet['NPC'] == ENTITIES.TOH_ZONIKKI) then
 			message('Toh Dialogue time')
-			coroutine.sleep(2)
+			coroutine.sleep(1)
 			--inject_dialogue_option(1, ENTITIES.TOH_ZONIKKI, packet['NPC Index'], packet['Menu ID'],false) -- select first option
 			buy_bucket()
 			coroutine.sleep(1)
 			state.bucket_size = 50
 			state.action = BOT_ACTION.GATHERING
-			message('Going clamming (size:' .. tostring(state.bucket_size) .. ' weight:' .. tostring(state.bucket_weight) .. ")")
+			message('Going clamming')
+			report_bucket()
 			local clamming_point_location = get_random_point_on_circle(CLAMMING_POINT_LOCATION.x, 
 			CLAMMING_POINT_LOCATION.y, CLAMMING_POINT_LOCATION.z, CLAMMING_POINT_RADIUS)
 			snap_to_point(clamming_point_location.x, clamming_point_location.y, clamming_point_location.z)
+			coroutine.sleep(1)
 			gather_clams()
 
 		elseif(packet['Menu ID'] == DIALOGUE.TOH_MID_CLAMMING_MENU and packet['NPC'] == ENTITIES.TOH_ZONIKKI) then
