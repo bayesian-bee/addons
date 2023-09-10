@@ -281,24 +281,24 @@ data.unknown_item = {name='unknown', id=80001}
 
 --Bee: Unless noted otherwise, these values are not updated for horizon.
 data.rod_modifiers_by_id = {
-    [17011]={nil, 1.5},
-    [17014]={1.25, nil, 0},
-    [17015]={nil, nil, 0},
-    [17380]={1.3, nil, 1},
-    [17381]={nil, nil, 1},
-    [17382]={nil, nil, 1},
-    [17383]={1.7, nil, 1},
-    [17384]={},
-    [17385]={},
+    [17011]={0.7, 1.2}, --speculative fix
+    [17014]={0.95, nil, 0}, --speculative fix
+    [17015]={0.7, nil, 0}, --speculative fix
+    [17380]={1.0, nil, 1}, --speculative fix
+    [17381]={0.7, nil, 1}, --Composite Fishing Rod, fixed for horizon
+    [17382]={0.7, nil, 1}, --speculative fix
+    [17383]={1.4, nil, 1}, --speculative fix
+    [17384]={0.7}, --super speculative fix
+    [17385]={0.7}, --super speculative fix
     [17386]={0.8, 1.0}, --Lu Shang's Fishing Rod, fixed for horizon
-    [17387]={1.3},
-    [17388]={1.35},
+    [17387]={1.0}, --speculative fix
+    [17388]={1.05}, --speculative fix
     [17389]={1.1}, --Bamboo Fishing Rod, fixed for horizon
-    [17390]={1.45},
-    [17391]={1.5},
-    [19319]={},
-    [19320]={1.1, 1.3},
-    [19321]={nil, 1.5},
+    [17390]={1.15}, --speculative fix
+    [17391]={1.2}, --speculative fix
+    [19319]={0.7}, --super speculative fix
+    [19320]={0.8, 1.0}, --speculative fix
+    [19321]={0.7, 1.2}, --speculative fix
 }
 
 data.continent_by_zone = {

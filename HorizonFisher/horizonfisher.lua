@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.6.0.2'
+_addon.version = '0.6.1.0'
 _addon.command = 'horizonfisher'
 
 -- built-in libraries

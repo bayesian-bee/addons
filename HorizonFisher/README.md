@@ -1,6 +1,6 @@
 # A note about HorizonFisher
 
-This version of fisher uses the fishing parameters and calculations that are specific to HorizonXI. It is not complete.
+This version of fisher uses the fishing parameters and calculations that are specific to HorizonXI. It is not complete. If you would like to help with development, set `debug_messages` to `true` in horizonfisher/data/Charactername.xml so you can better report aberrant results to Bee.
 
 In particular, the fish_attack parameter of the rod is different on horizon, and some fish parameters are different. I've noted in the `rod_modifiers_by_id` table in data.lua which rod parameters have been fixed for horizon.
 
