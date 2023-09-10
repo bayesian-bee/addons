@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.6.1.0'
+_addon.version = '0.6.2.0'
 _addon.command = 'horizonfisher'
 
 -- built-in libraries
@@ -55,6 +55,7 @@ do
         equip_delay=2, move_delay=0, cast_attempt_delay=3, cast_attempt_max=3,
         release_delay=3, catch_delay_min=3, catch_delay_tweak=15, recast_delay=3,
         fatigue_start=os.date('!%Y-%m-%d', os.time() + 9 * 60 * 60), fatigue_count=0,
+		display_fatigue_info=false,
         no_hook_max=20, debug_messages=false, alert_command='',
     }
 
@@ -292,7 +293,9 @@ local function update_fatigue(relative, value)
         config.save(settings, 'all')
     end
     local reset = (24 * 60) - (now.hour * 60 + now.min)
-    message(string.format('fishing fatigue = %d/200, resets in %dh%dm', settings.fatigue_count, math.floor(reset / 60), reset % 60))
+	if(settings.display_fatigue_info) then
+		message(string.format('fishing fatigue = %d/200, resets in %dh%dm', settings.fatigue_count, math.floor(reset / 60), reset % 60))
+	end
 end
 
 local function start_fishing(catch_limit)
