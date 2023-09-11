@@ -1,7 +1,7 @@
 _addon.name     = 'TellAlert'
 _addon.author   = 'Bee'
 _addon.description = 'High visibility message appears when you get a DM.'
-_addon.version  = '0.4'
+_addon.version  = '0.4.1'
 _addon.commands = {'tellalert'}
 _addon.commands = {'ta'}
 
@@ -22,9 +22,7 @@ local function auto_reply(name, message, delay)
 end
 
 local function panic_button()
-	windower.send_command('lua unload shuckmaster')
-	windower.send_command('lua unload claimtools')
-	windower.ffxi.run(false)
+	windower.send_command('exec panic.txt')
 end
 
 local function message(message_text)
