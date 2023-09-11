@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.6.2.0'
+_addon.version = '0.6.2.1'
 _addon.command = 'horizonfisher'
 
 -- built-in libraries
@@ -78,10 +78,10 @@ do
     if windower.ffxi.get_info().logged_in then initialize() end
 end
 
-local MESSAGE_INFO = 207
-local MESSAGE_WARN = 200
-local MESSAGE_ERROR = 167
-local MESSAGE_DEBUG = 160
+local MESSAGE_INFO = 211 --Unity
+local MESSAGE_WARN = 220 --Assist J
+local MESSAGE_ERROR = 221 --Assist E
+local MESSAGE_DEBUG = 221 --Assist E
 
 local function message(text, level)
     local mode = level or MESSAGE_INFO
