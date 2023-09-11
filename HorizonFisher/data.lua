@@ -182,7 +182,7 @@ data.item_fishing_parameters = {
     {name='titanictus', id=4476, stamina=68, arrow_duration=6, arrow_frequency=14, stamina_depletion=28, size=1, legendary=1},
     {name='kalkanbaligi', id=5140, stamina=70, arrow_duration=7, arrow_frequency=12, stamina_depletion=19, size=1, legendary=1},
     {name='turnabaligi', id=5137, stamina=70, arrow_duration=5, arrow_frequency=13, stamina_depletion=30, size=1, legendary=1},
-    {name='armored pisces', id=4316, stamina=72, arrow_duration=6, arrow_frequency=13, stamina_depletion=22, size=1, legendary=1},
+    {name='armored pisces', id=4316, stamina=72, arrow_duration=10, arrow_frequency=12, stamina_depletion=22, size=1, legendary=1},
     {name='giant chirai', id=4308, stamina=73, arrow_duration=5, arrow_frequency=15, stamina_depletion=25, size=1, legendary=1},
     {name='crocodilos', id=5814, stamina=74, arrow_duration=3, arrow_frequency=13, stamina_depletion=25, size=1},
     {name='red bubble-eye', id=5446, stamina=77, arrow_duration=4, arrow_frequency=15, stamina_depletion=24},
@@ -275,15 +275,17 @@ data.item_fishing_parameters = {
     {name='monster', id=80000, stamina=43, arrow_duration=15, arrow_frequency=12, stamina_depletion=38, size=1},
     {name='monster', id=80000, stamina=60, arrow_duration=9, arrow_frequency=15, stamina_depletion=27, size=1},
     {name='monster', id=80000, stamina=75, arrow_duration=8, arrow_frequency=15, stamina_depletion=26, size=1},
+    {name='monster', id=80000, stamina=23, arrow_duration=11, arrow_frequency=15, stamina_depletion=15, size=1},
 }
 
 data.unknown_item = {name='unknown', id=80001}
 
---Bee: Unless noted otherwise, these values are not updated for horizon.
+--Bee: Of the rods that I've checked, Horizon seems to have subtracted 0.3 from these values. 
+--I have noted the rods that I've confirmed fixed, and those that I speculate are fixed but have not confirmed.
 data.rod_modifiers_by_id = {
     [17011]={0.7, 1.2}, --speculative fix
     [17014]={0.95, nil, 0}, --speculative fix
-    [17015]={0.7, nil, 0}, --speculative fix
+    [17015]={0.7, nil, 0}, --Halcyon Fishing Rod, fixed for horizon
     [17380]={1.0, nil, 1}, --speculative fix
     [17381]={0.7, nil, 1}, --Composite Fishing Rod, fixed for horizon
     [17382]={0.7, nil, 1}, --speculative fix
