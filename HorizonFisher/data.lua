@@ -182,7 +182,7 @@ data.item_fishing_parameters = {
     {name='titanictus', id=4476, stamina=68, arrow_duration=6, arrow_frequency=14, stamina_depletion=28, size=1, legendary=1},
     {name='kalkanbaligi', id=5140, stamina=70, arrow_duration=7, arrow_frequency=12, stamina_depletion=19, size=1, legendary=1},
     {name='turnabaligi', id=5137, stamina=70, arrow_duration=5, arrow_frequency=13, stamina_depletion=30, size=1, legendary=1},
-    {name='armored pisces', id=4316, stamina=72, arrow_duration=10, arrow_frequency=12, stamina_depletion=22, size=1, legendary=1},
+    {name='armored pisces', id=4316, stamina=72, arrow_duration=10, arrow_frequency=12, stamina_depletion=22, size=1},--not legendary on horizon
     {name='giant chirai', id=4308, stamina=73, arrow_duration=5, arrow_frequency=15, stamina_depletion=25, size=1, legendary=1},
     {name='crocodilos', id=5814, stamina=74, arrow_duration=3, arrow_frequency=13, stamina_depletion=25, size=1},
     {name='red bubble-eye', id=5446, stamina=77, arrow_duration=4, arrow_frequency=15, stamina_depletion=24},
