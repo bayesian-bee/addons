@@ -4,6 +4,11 @@ This version of fisher uses the fishing parameters and calculations that are spe
 
 In particular, the fish_attack parameter of the rod is different on horizon, and some fish parameters are different. I've noted in the `rod_modifiers_by_id` table in data.lua which rod parameters have been fixed for horizon.
 
+## Changelog
+
+0.0.6.4
+* Fixed a bug in which error messages would not display under most circumstances.
+
 # The original fisher readme.
 
 ## About Fisher
