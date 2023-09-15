@@ -283,24 +283,24 @@ data.unknown_item = {name='unknown', id=80001}
 --Bee: Of the rods that I've checked, Horizon seems to have subtracted 0.3 from these values. 
 --I have noted the rods that I've confirmed fixed, and those that I speculate are fixed but have not confirmed.
 data.rod_modifiers_by_id = {
-    [17011]={0.7, 1.2}, --speculative fix
-    [17014]={0.95, nil, 0}, --speculative fix
-    [17015]={0.7, nil, 0}, --Halcyon Fishing Rod, fixed for horizon
-    [17380]={1.0, nil, 1}, --speculative fix
-    [17381]={0.7, nil, 1}, --Composite Fishing Rod, fixed for horizon
-    [17382]={0.7, nil, 1}, --speculative fix
-    [17383]={1.4, nil, 1}, --speculative fix
-    [17384]={0.7}, --super speculative fix
-    [17385]={0.7}, --super speculative fix
-    [17386]={0.8, 1.0}, --Lu Shang's Fishing Rod, fixed for horizon
-    [17387]={1.0}, --speculative fix
-    [17388]={1.05}, --speculative fix
-    [17389]={1.1}, --Bamboo Fishing Rod, fixed for horizon
-    [17390]={1.15}, --speculative fix
-    [17391]={1.2}, --speculative fix
-    [19319]={0.7}, --super speculative fix
-    [19320]={0.8, 1.0}, --speculative fix
-    [19321]={0.7, 1.2}, --speculative fix
+    [17011]={70, 120}, --speculative fix
+    [17014]={95, nil, 0}, --speculative fix
+    [17015]={70, nil, 0}, --Halcyon Fishing Rod, fixed for horizon
+    [17380]={100, nil, 1}, --speculative fix
+    [17381]={70, nil, 1}, --Composite Fishing Rod, fixed for horizon
+    [17382]={70, nil, 1}, --speculative fix
+    [17383]={140, nil, 1}, --speculative fix
+    [17384]={70}, --super speculative fix
+    [17385]={70}, --super speculative fix
+    [17386]={80, 100}, --Lu Shang's Fishing Rod, fixed for horizon
+    [17387]={100}, --speculative fix
+    [17388]={105}, --speculative fix
+    [17389]={110}, --Bamboo Fishing Rod, fixed for horizon
+    [17390]={115}, --speculative fix
+    [17391]={120}, --speculative fix
+    [19319]={70}, --super speculative fix
+    [19320]={80, 100}, --speculative fix
+    [19321]={70, 120}, --speculative fix
 }
 
 data.continent_by_zone = {

@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.6.2.4'
+_addon.version = '0.6.3.0'
 _addon.command = 'horizonfisher'
 
 -- built-in libraries
@@ -338,12 +338,12 @@ do
         local stamina_depletion = item.stamina_depletion
         if normal_mod and not item.legendary then
 			--Bee: On retail this is floored prior to being multiplied by 20. On ASB, it is floored after multiplication by 20
-            stamina_depletion = stamina_depletion * normal_mod
+            stamina_depletion = stamina_depletion * normal_mod / 100
         end
         legendary_mod = legendary_mod or normal_mod
         if legendary_mod and item.legendary then
 			--Bee: On retail this is floored prior to being multiplied by 20. On ASB, it is floored after multiplication by 20
-            stamina_depletion = stamina_depletion * legendary_mod
+            stamina_depletion = stamina_depletion * legendary_mod / 100
         end
 		--Bee: On ASB, this is floored after multiplication by 20. On horizon, they subtract 1.
 		local horizon_stamina_depletion = math.floor(stamina_depletion * 20 - 1)

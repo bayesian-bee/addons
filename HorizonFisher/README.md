@@ -6,7 +6,10 @@ In particular, the fish_attack parameter of the rod is different on horizon, and
 
 ## Changelog
 
-0.0.6.4
+0.6.3.0
+* Fixed a mismatch between sever-calculated stamina depletion and addon-calculated stamina depletion introduced by floating point arithmetic errors
+
+0.6.2.4
 * Fixed a bug in which error messages would not display under most circumstances.
 
 # The original fisher readme.
