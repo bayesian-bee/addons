@@ -59,7 +59,7 @@ data.item_fishing_parameters = {
     {name='tiny goldfish', id=4310, stamina=28, arrow_duration=2, arrow_frequency=15, stamina_depletion=22},
     {name='tiny goldfish', id=4310, stamina=28, arrow_duration=2, arrow_frequency=15, stamina_depletion=22, count=2},
     {name='tiny goldfish', id=4310, stamina=28, arrow_duration=2, arrow_frequency=15, stamina_depletion=22, count=3},
-    {name='forest carp', id=4289, stamina=28, arrow_duration=6, arrow_frequency=12, stamina_depletion=11},
+    {name='forest carp', id=4289, stamina=28, arrow_duration=11, arrow_frequency=12, stamina_depletion=11},
     {name='cheval salmon', id=4379, stamina=28, arrow_duration=9, arrow_frequency=8, stamina_depletion=21},
     {name='contortopus', id=5961, stamina=29, arrow_duration=9, arrow_frequency=13, stamina_depletion=16},
     {name='yorchete', id=5536, stamina=29, arrow_duration=11, arrow_frequency=10, stamina_depletion=15},

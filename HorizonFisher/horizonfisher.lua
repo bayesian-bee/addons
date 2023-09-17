@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.6.3.0'
+_addon.version = '0.6.3.1'
 _addon.command = 'horizonfisher'
 
 -- built-in libraries
@@ -223,6 +223,7 @@ do
             end
         end
         if coroutine_key == session.coroutine_key and cast_attempt >= settings.cast_attempt_max then
+			message('why are we here: ' .. tostring(cast_attempt) .. ' ' .. tostring(settings.cast_attempt_max) .. ' ' .. tostring(coroutine_key == session.coroutine_key))
             stop_fishing('unable to cast')
         end
     end

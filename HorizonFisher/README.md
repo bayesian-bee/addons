@@ -6,6 +6,9 @@ In particular, the fish_attack parameter of the rod is different on horizon, and
 
 ## Changelog
 
+0.6.3.1
+* Corrected arrow_duration for forest carp.
+
 0.6.3.0
 * Fixed a mismatch between sever-calculated stamina depletion and addon-calculated stamina depletion introduced by floating point arithmetic errors
 
