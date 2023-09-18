@@ -1,10 +1,16 @@
 # A note about HorizonFisher
 
-This version of fisher uses the fishing parameters and calculations that are specific to HorizonXI. It is not complete. If you would like to help with development, set `debug_messages` to `true` in horizonfisher/data/Charactername.xml so you can better report aberrant results to Bee.
+This version of fisher that works on HorizonXI. It is not complete. If you would like to help with development, set `debug_messages` to `true` in horizonfisher/data/CharacterName.xml so you can better report aberrant results to Bee.
 
-In particular, the fish_attack parameter of the rod is different on horizon, and some fish parameters are different. I've noted in the `rod_modifiers_by_id` table in data.lua which rod parameters have been fixed for horizon.
+A number of changes were required to make this version work on Horizon:
+* Fish's stamina depletion rate is calculated differently on Horizon. On retail, it is floored prior to multiplication by 20. On ASB, it is floored after multiplication, and on Horizon the result is decremented by 1.
+* On HorizonXI, all rods have 30 less rod attack. For example, Lu Shang's has 130 on retail, and 100 on Horizon.
+* Some fish have different stamina, arrow frequency, arrow duration, and stamina depletion rates on Horizon.
 
 ## Changelog
+
+0.6.3.2
+* Increased default fishing re-attempts to mitigate an issue in which fishing would stop after many items are moved from inventory to satchel.
 
 0.6.3.1
 * Corrected arrow_duration for forest carp.
@@ -27,7 +33,9 @@ This project is a complete rewrite of my old addon of the same name.
 
 ### Private Servers
 
-Fisher **will _NOT_** work on private servers! This is due to the fact that private servers do not properly implement the fishing system on the server side. There is nothing that can be done to fisher to fix this. It's a problem with the server and needs to be fixed there.
+~~Fisher **will _NOT_** work on private servers! This is due to the fact that private servers do not properly implement the fishing system on the server side. There is nothing that can be done to fisher to fix this. It's a problem with the server and needs to be fixed there.~~
+
+Note(Bee): :)
 
 ### Display of Identified Fish
 
