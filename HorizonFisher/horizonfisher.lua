@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.6.3.1'
+_addon.version = '0.6.3.2'
 _addon.command = 'horizonfisher'
 
 -- built-in libraries
@@ -52,7 +52,7 @@ do
     local settings_cache = {}
 
     local defaults = {
-        equip_delay=2, move_delay=0, cast_attempt_delay=3, cast_attempt_max=3,
+        equip_delay=2, move_delay=0, cast_attempt_delay=4, cast_attempt_max=10,
         release_delay=3, catch_delay_min=3, catch_delay_tweak=15, recast_delay=3,
         fatigue_start=os.date('!%Y-%m-%d', os.time() + 9 * 60 * 60), fatigue_count=0,
 		display_fatigue_info=false,
