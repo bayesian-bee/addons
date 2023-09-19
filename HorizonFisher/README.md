@@ -1,16 +1,15 @@
 # A note about HorizonFisher
 
-This version of fisher that works on HorizonXI. It is not complete. If you would like to help with development, set `debug_messages` to `true` in horizonfisher/data/CharacterName.xml so you can better report aberrant results to Bee.
+This version of fisher uses the fishing parameters and calculations that are specific to HorizonXI. It is not complete. If you would like to help with development, set `debug_messages` to `true` in horizonfisher/data/Charactername.xml so you can better report aberrant results to Bee.
 
-A number of changes were required to make this version work on Horizon:
-* Fish's stamina depletion rate is calculated differently on Horizon. On retail, it is floored prior to multiplication by 20. On ASB, it is floored after multiplication, and on Horizon the result is decremented by 1.
-* On HorizonXI, all rods have 30 less rod attack. For example, Lu Shang's has 130 on retail, and 100 on Horizon.
-* Some fish have different stamina, arrow frequency, arrow duration, and stamina depletion rates on Horizon.
+In particular, the fish_attack parameter of the rod is different on horizon, and some fish parameters are different. I've noted in the `rod_modifiers_by_id` table in data.lua which rod parameters have been fixed for horizon.
+
+This version also detects when your character is moved, or "zoned-in-place." See the bottom of this document for configurations.
 
 ## Changelog
 
-0.6.3.2
-* Increased default fishing re-attempts to mitigate an issue in which fishing would stop after many items are moved from inventory to satchel.
+0.7.0.0
+* Added anti-GM technology that reacts to being pos hacked or zoned.
 
 0.6.3.1
 * Corrected arrow_duration for forest carp.
@@ -33,9 +32,7 @@ This project is a complete rewrite of my old addon of the same name.
 
 ### Private Servers
 
-~~Fisher **will _NOT_** work on private servers! This is due to the fact that private servers do not properly implement the fishing system on the server side. There is nothing that can be done to fisher to fix this. It's a problem with the server and needs to be fixed there.~~
-
-Note(Bee): :)
+Fisher **will _NOT_** work on private servers! This is due to the fact that private servers do not properly implement the fishing system on the server side. There is nothing that can be done to fisher to fix this. It's a problem with the server and needs to be fixed there.
 
 ### Display of Identified Fish
 
@@ -183,3 +180,15 @@ Here are the available advanced settings:
 | `debug_messages` | Specifies if debug messages should be output to the chat log. | false |
 | `alert_command` | A string that will be passed to `windower.send_command` when fisher stops automatically. *An empty string will disable this feature.* | *empty string* |
 
+### Anti-GM
+
+This bot can react to meddling GMs! On HorizonXI, GMs rotate or reposition characters suspected of fishbotting to see how they react. This addon detects movement and rotation using a [geofence](https://en.wikipedia.org/wiki/Geo-fence) that is checked on each incoming packet. If your character is moved outside of the geofence boundary or is rotated by a sufficiently large angle, the following takes place:
+* The player is alerted with a message in the log and a highly-visible on-screen alert. The alert can be dismissed with `//horizonfisher dismiss`.
+* The bot attempts to reel in a currently cast fishing line.
+* Automatic fishing stops.
+* The bot runs around in a semi-random pattern for a few seconds.
+* The bot sends between 1 and 5 question marks into /say.
+
+The above can be enabled by setting `anti_gm_enabled` to true in the settings XML file. If you are using an older version of horizonfisher, please delete your settings file and let the addon regenerate a new one, then set `anti_gm_enabled` to true and restart the addon.
+
+**Remember, this may not prevent you from being suspended or banned if you are caught botting.** All botting is at your own risk, and the best way to avoid getting caught is to bot less.

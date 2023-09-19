@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.6.3.2'
+_addon.version = '0.7.0.0'
 _addon.command = 'horizonfisher'
 
 -- built-in libraries
@@ -31,6 +31,7 @@ local math = require('math')
 local os = require('os')
 local string = require('string')
 local table = require('table')
+local texts = require('texts')
 -- extra libraries
 local bit = require('bit')
 local config = require('config')
@@ -57,6 +58,17 @@ do
         fatigue_start=os.date('!%Y-%m-%d', os.time() + 9 * 60 * 60), fatigue_count=0,
 		display_fatigue_info=false,
         no_hook_max=20, debug_messages=false, alert_command='',
+		anti_gm = {
+			anti_gm_enabled = false,
+			alert_box = {
+				pos={x=100,y=200}, 
+				bg={alpha=255,red=180,green=0,blue=0},
+				text={size=72,alpha=255,red=255,green=255,blue=255},
+			},
+			heading_tolerance = 0.25,
+			geofence_radius = 3,
+			gm_response_chat_delay = 8,
+		}
     }
 
     local function load_settings(character)
@@ -94,6 +106,9 @@ local function stop_fishing(reason)
     if session.running then
         session.running = false
         session.coroutine_key = math.random()
+		if(settings.anti_gm.anti_gm_enabled) then
+			session.geofence = nil
+		end
         if reason then
             message(string.format('stopped automated fishing (%s)', reason), MESSAGE_ERROR)
             if #settings.alert_command > 0 then
@@ -103,6 +118,91 @@ local function stop_fishing(reason)
             message('stopped automated fishing', MESSAGE_WARN)
         end
     end
+end
+
+local anti_gm
+do
+	local alert_box = texts.new(settings.anti_gm.alert_box)
+	
+	local function press_key(key, duration)
+		windower.send_command('setkey '..key..' down')
+		if(not duration) then duration = 0.1 end
+		coroutine.sleep(.1)
+		windower.send_command('setkey '..key..' up')
+	end
+	
+	function set_geofence()
+		local player_data = windower.ffxi.get_mob_by_id(windower.ffxi.get_player().id)
+		session.geofence = {}
+		session.geofence.zone = windower.ffxi.get_info().zone
+		session.geofence.center = {x=player_data.x, y=player_data.y, z=player_data.z}
+		session.geofence.radius = settings.anti_gm.geofence_radius
+		session.geofence.initial_heading = player_data.heading
+		session.geofence.heading_tolerance = settings.anti_gm.heading_tolerance --radian equivalent of 15 degrees
+	end
+	
+	local function act_natural()
+		--say a random number of question marks
+		math.randomseed(os.time())
+		math.random(); math.random(); math.random()
+		local say_message = string.rep('?',math.floor(math.random()*5+1))
+		local say_delay = tostring(settings.anti_gm.gm_response_chat_delay)
+		windower.send_command('/echo scheduling /say in ' .. say_delay .. 'sec...;wait ' .. say_delay .. ';input /say ' .. say_message)
+		
+		--move around in a cute circle a few times
+		coroutine.sleep(3)
+		local path = {0, math.pi/2, math.pi, -math.pi/2}
+		for i=1,(8*#path-1) do
+			local duration = 0.1 + math.random()*0.4
+			coroutine.sleep(duration)
+			windower.ffxi.run(path[(i % #path) + 1])
+		end
+		windower.ffxi.run(false)
+	end
+	
+	local function anti_gm_alert_on_screen(alert_text)
+		alert_box:text(alert_text)
+		alert_box:visible(true)
+	end
+	
+	function clear_alert()
+		alert_box:text('')
+		alert_box:visible(false)
+	end
+	
+	function on_geofence_break()
+		message('[Anti-GM] YOU HAVE MOVED!', MESSAGE_ERROR)
+		anti_gm_alert_on_screen('YOU HAVE MOVED!')
+		session.geofence = nil
+		stop_fishing('geofence broken')
+		press_key('escape') --TODO: end ongoing fishing with packet injection.
+		act_natural()
+	end
+	
+	--assumes radians
+	local function angular_difference(angle1, angle2)
+		local difference = (angle1 - angle2 + math.pi) % (2*math.pi) - math.pi
+		if(difference < -math.pi) then difference = difference + 2*math.pi end
+		return difference
+	end
+	
+	function check_geofence()
+		if(session.geofence) then
+			local pd = windower.ffxi.get_mob_by_id(windower.ffxi.get_player().id)
+			local gf = session.geofence.center
+			local distance_from_geofence_center = math.sqrt((pd.x - gf.x)^2 + (pd.y - gf.y)^2 + (pd.z - gf.z)^2)
+			local angular_distance_from_initial_heading = math.abs(angular_difference(pd.heading, session.geofence.initial_heading))
+			
+			if(distance_from_geofence_center >= session.geofence.radius) then
+				message('Geofence distance break (distance=' .. tostring(distance_from_geofence_center) .. ')', MESSAGE_DEBUG)
+				on_geofence_break()
+			elseif(angular_distance_from_initial_heading >= math.abs(session.geofence.heading_tolerance)) then
+				message('Geofence heading break (delta heading=' .. tostring(angular_distance_from_initial_heading) .. ')', MESSAGE_DEBUG)
+				on_geofence_break()
+			end			
+		end
+	end
+	
 end
 
 local get_equipped_item_id
@@ -311,6 +411,10 @@ local function start_fishing(catch_limit)
         else
             message('started automated fishing', MESSAGE_WARN)
         end
+		if(settings.anti_gm.anti_gm_enabled) then
+			set_geofence()
+			message('[Anti-GM] geofence enabled.')
+		end
         update_fatigue()
         coroutine.schedule(function () input_fish_command(coroutine_key) end, 0)
     end
@@ -403,7 +507,20 @@ windower.register_event('action', function (action)
 end)
 
 windower.register_event('incoming chunk', function (id, original)
-    if id == 0x00B then
+	if(settings.anti_gm.anti_gm_enabled) then
+		check_geofence()
+	end
+	if id == 0x00A then --zone
+		if(session.running and settings.anti_gm.anti_gm_enabled and session.geofence) then
+			if(session.geofence.zone == windower.ffxi.get_info().zone) then
+				on_geofence_break()
+			else
+				stop_fishing('Zoned')
+			end
+		elseif(session.running) then
+			stop_fishing('Zoned')
+		end
+    elseif id == 0x00B then
         if string.byte(original, 5) == 1 then
             stop_fishing('log out')
         else
@@ -473,6 +590,11 @@ windower.register_event('incoming chunk', function (id, original)
         end
     end
 end)
+
+local function test()
+	local player_data = windower.ffxi.get_mob_by_id(windower.ffxi.get_player().id)
+	message(tostring(player_data.heading))
+end
 
 windower.register_event('outgoing chunk', function (id, original, _, injected)
     if id == 0x01A then
@@ -612,6 +734,10 @@ do
             command_list()
         elseif command == 'fatigue' then
             command_fatigue(argument)
+		elseif command == 'dismiss' then
+			clear_alert()
+		elseif command == 'test'  then
+			test()
         end
     end)
 end
