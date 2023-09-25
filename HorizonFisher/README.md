@@ -8,6 +8,10 @@ This version also detects when your character is moved, or "zoned-in-place." See
 
 ## Changelog
 
+0.7.0.1
+* Added the shortcut addon command `//hf`
+* Adjusted gigant squid parameters.
+
 0.7.0.0
 * Added anti-GM technology that reacts to being pos hacked or zoned.
 
@@ -32,7 +36,9 @@ This project is a complete rewrite of my old addon of the same name.
 
 ### Private Servers
 
-Fisher **will _NOT_** work on private servers! This is due to the fact that private servers do not properly implement the fishing system on the server side. There is nothing that can be done to fisher to fix this. It's a problem with the server and needs to be fixed there.
+~~Fisher **will _NOT_** work on private servers! This is due to the fact that private servers do not properly implement the fishing system on the server side. There is nothing that can be done to fisher to fix this. It's a problem with the server and needs to be fixed there.~~
+
+NOTE(Bee): =)
 
 ### Display of Identified Fish
 
@@ -72,9 +78,17 @@ Extract the archive to your `addons` folder, which by default you can find insid
 ## Specify Catch and Bait
 
 ```
-//fisher add <item_name>
-//fisher remove <item>
-//fisher list
+//horizonfisher add <item_name>
+//horizonfisher remove <item>
+//horizonfisher list
+```
+
+OR
+
+```
+//hf add <item_name>
+//hf remove <item>
+//hf list
 ```
 
 There is no need to use the same capitalization as the game, and you can also use both the short and long names.
@@ -94,15 +108,15 @@ There are also special names that can be used for adding and removing groups of 
 Here are some examples:
 
 ```
-//fisher add moat carp
-//fisher add CrAyFiSh
-//fisher add insect ball
-//fisher add ball of insect paste
-//fisher add all fish
-//fisher remove Moat Carp
-//fisher remove 4472
-//fisher remove all
-//fisher list
+//horizonfisher add moat carp
+//horizonfisher add CrAyFiSh
+//horizonfisher add insect ball
+//horizonfisher add ball of insect paste
+//horizonfisher add all fish
+//horizonfisher remove Moat Carp
+//horizonfisher remove 4472
+//horizonfisher remove all
+//horizonfisher list
 ```
 
 ## Start and Stop Automatic Fishing
@@ -110,8 +124,8 @@ Here are some examples:
 > You will need to add at least one fish/item and one bait before starting automatic fishing.
 
 ```
-//fisher start [catch_limit]
-//fisher stop
+//horizonfisher start [catch_limit]
+//horizonfisher stop
 ```
 
 When starting automatic fishing, you can also specify the optional `catch_limit` to stop fishing after the specified number of catches.
@@ -142,7 +156,7 @@ When fisher is loaded but the automatic fishing is not started it will still tra
 > Modifying your tracked fishing fatigue will not allow you to exceed the actual fishing fatigue limit.
 
 ```
-//fisher fatigue [modifier]
+//horizonfisher fatigue [modifier]
 ```
 
 When a `modifier` is not provided this command will display your current amount of tracked fishing fatigue.
@@ -151,10 +165,10 @@ If one is provided it will modify or overwrite the amount of tracked fishing fat
 Here are some examples:
 
 ```
-//fisher fatigue
-//fisher fatigue +10
-//fisher fatigue -10
-//fisher fatigue 123
+//horizonfisher fatigue
+//horizonfisher fatigue +10
+//horizonfisher fatigue -10
+//horizonfisher fatigue 123
 ```
 
 ## Advanced Settings

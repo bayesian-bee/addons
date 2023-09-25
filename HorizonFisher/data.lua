@@ -170,7 +170,7 @@ data.item_fishing_parameters = {
     {name='grimmonite', id=4304, stamina=63, arrow_duration=9, arrow_frequency=7, stamina_depletion=31, size=1, continent=5},
     {name='ahtapot', id=5455, stamina=63, arrow_duration=9, arrow_frequency=7, stamina_depletion=31, size=1, continent=2},
     {name='emperor fish', id=4454, stamina=63, arrow_duration=5, arrow_frequency=13, stamina_depletion=36, size=1, continent=5},
-    {name='gigant squid', id=4474, stamina=63, arrow_duration=7, arrow_frequency=10, stamina_depletion=43, size=1},
+    {name='gigant squid', id=4474, stamina=63, arrow_duration=7, arrow_frequency=15, stamina_depletion=43, size=1},
     {name='morinabaligi', id=5462, stamina=63, arrow_duration=5, arrow_frequency=13, stamina_depletion=36, size=1, continent=2},
     {name='megalodon', id=5467, stamina=64, arrow_duration=8, arrow_frequency=12, stamina_depletion=33, size=1, legendary=1},
     {name='black sole', id=4384, stamina=66, arrow_duration=7, arrow_frequency=12, stamina_depletion=33, continent=5},
