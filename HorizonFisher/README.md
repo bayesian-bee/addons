@@ -6,24 +6,6 @@ In particular, the fish_attack parameter of the rod is different on horizon, and
 
 This version also detects when your character is moved, or "zoned-in-place." See the bottom of this document for configurations.
 
-## Changelog
-
-0.7.0.1
-* Added the shortcut addon command `//hf`
-* Adjusted gigant squid parameters.
-
-0.7.0.0
-* Added anti-GM technology that reacts to being pos hacked or zoned.
-
-0.6.3.1
-* Corrected arrow_duration for forest carp.
-
-0.6.3.0
-* Fixed a mismatch between sever-calculated stamina depletion and addon-calculated stamina depletion introduced by floating point arithmetic errors
-
-0.6.2.4
-* Fixed a bug in which error messages would not display under most circumstances.
-
 # The original fisher readme.
 
 ## About Fisher
@@ -206,3 +188,26 @@ This bot can react to meddling GMs! On HorizonXI, GMs rotate or reposition chara
 The above can be enabled by setting `anti_gm_enabled` to true in the settings XML file. If you are using an older version of horizonfisher, please delete your settings file and let the addon regenerate a new one, then set `anti_gm_enabled` to true and restart the addon.
 
 **Remember, this may not prevent you from being suspended or banned if you are caught botting.** All botting is at your own risk, and the best way to avoid getting caught is to bot less.
+
+
+## Changelog
+
+0.7.0.2
+* Fixing elshimo frog/newt
+* Moving changelog in README
+
+0.7.0.1
+* Added the shortcut addon command `//hf`
+* Adjusted gigant squid parameters.
+
+0.7.0.0
+* Added anti-GM technology that reacts to being pos hacked or zoned.
+
+0.6.3.1
+* Corrected arrow_duration for forest carp.
+
+0.6.3.0
+* Fixed a mismatch between sever-calculated stamina depletion and addon-calculated stamina depletion introduced by floating point arithmetic errors
+
+0.6.2.4
+* Fixed a bug in which error messages would not display under most circumstances.
