@@ -192,6 +192,10 @@ The above can be enabled by setting `anti_gm_enabled` to true in the settings XM
 
 ## Changelog
 
+0.7.0.4
+* Speculatively fixed Ryugu Titan and Gugrusaurus
+* Looks like some high level fish may be higher level on retail than on horizon, affecting their Stamina values.
+
 0.7.0.3
 * Re-fixed gigant squid.
 * Fixed Titanictus and Titanic Sawfish
