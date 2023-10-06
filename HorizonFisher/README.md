@@ -192,6 +192,10 @@ The above can be enabled by setting `anti_gm_enabled` to true in the settings XM
 
 ## Changelog
 
+0.7.0.3
+* Re-fixed gigant squid.
+* Fixed Titanictus and Titanic Sawfish
+
 0.7.0.2
 * Fixing elshimo frog/newt
 * Moving changelog in README
