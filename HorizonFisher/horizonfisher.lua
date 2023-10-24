@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.7.0.4'
+_addon.version = '0.7.0.5'
 _addon.commands = {'horizonfisher', 'hf'}
 
 -- built-in libraries
@@ -465,6 +465,7 @@ do
             for i = 1, #data.item_fishing_parameters do
                 local item = data.item_fishing_parameters[i]
                 local uid = make_uid(item, unpack(rod_modifiers))
+				message('uid ' .. tostring(i) .. ': ' .. uid, MESSAGE_DEBUG)
                 if not item_by_uid[uid] then item_by_uid[uid] = {} end
                 table.insert(item_by_uid[uid], item)
             end
@@ -564,8 +565,9 @@ windower.register_event('incoming chunk', function (id, original)
         end
         session.player_status = player_status
     elseif id == 0x115 then
+		--Stamina, arrow duration, regen, arrow delay, fish attack, miss regen, delay, size (1=big), special
         local fishing_parameters = {string.unpack(original, 'HHHHHHHHI', 5)}
-        message(string.format('fishing parameters: ' .. table.concat(fishing_parameters, ', ')), MESSAGE_DEBUG)
+        message(string.format('params: ' .. table.concat(fishing_parameters, ', ')), MESSAGE_INFO)
         if check_equipment() then
             local catch = false
             local identified = identify_hooked_item(fishing_parameters)
