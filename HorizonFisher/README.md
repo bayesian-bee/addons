@@ -182,8 +182,8 @@ This bot can react to meddling GMs! On HorizonXI, GMs rotate or reposition chara
 * The player is alerted with a message in the log and a highly-visible on-screen alert. The alert can be dismissed with `//horizonfisher dismiss`.
 * The bot attempts to reel in a currently cast fishing line.
 * Automatic fishing stops.
-* The bot runs around in a semi-random pattern for a few seconds.
-* The bot sends between 1 and 5 question marks into /say.
+* The bot returns to the position they were in when `horizonfisher start` was called.
+* The bot resumes fishing.
 
 The above can be enabled by setting `anti_gm_enabled` to true in the settings XML file. If you are using an older version of horizonfisher, please delete your settings file and let the addon regenerate a new one, then set `anti_gm_enabled` to true and restart the addon.
 
@@ -191,6 +191,14 @@ The above can be enabled by setting `anti_gm_enabled` to true in the settings XM
 
 
 ## Changelog
+
+0.7.1
+* Shortened the addon name in messages.
+* Fishing params appear alongside "unknown" messages
+* Replaced "act natural" anti-GM functionality with return-to-fishing functionality.
+
+0.7.0.5
+* Made fishing params on by default.
 
 0.7.0.4
 * Speculatively fixed Ryugu Titan and Gugrusaurus

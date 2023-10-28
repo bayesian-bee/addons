@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.7.0.5'
+_addon.version = '0.7.1'
 _addon.commands = {'horizonfisher', 'hf'}
 
 -- built-in libraries
@@ -98,7 +98,7 @@ local MESSAGE_DEBUG = 222 --Assist E
 local function message(text, level)
     local mode = level or MESSAGE_INFO
     if settings.debug_messages or mode ~= MESSAGE_DEBUG then
-        windower.add_to_chat(mode, string.format('[%s] %s', _addon.name, text))
+        windower.add_to_chat(mode, string.format('[%s] %s', 'HF', text))
     end
 end
 
@@ -118,6 +118,68 @@ local function stop_fishing(reason)
             message('stopped automated fishing', MESSAGE_WARN)
         end
     end
+end
+
+local navigation
+do
+	require('vectors')
+
+	local function get_my_position_and_speed()
+		local my_mob_data = windower.ffxi.get_mob_by_id(windower.ffxi.get_player().id)
+		return {x=my_mob_data['x'], y=my_mob_data['y'], z=my_mob_data['z'], heading=my_mob_data['facing'], speed=my_mob_data['movement_speed']}
+	end
+	
+	local function quadrant_correction(v)
+		if(v[1] >= 0 and v[2] >= 0) then
+			return 0
+		elseif(v[1] < 0 and v[2] >= 0) then
+			return math.pi
+		elseif(v[1] < 0 and v[2] < 0) then
+			return math.pi
+		else
+			return math.pi*2
+		end
+	end
+
+	local function get_2d_vector_angle(v)
+		return quadrant_correction(v) + math.atan(v[2] / v[1])
+	end
+
+	local function angle_of_vector_between_two_points(point1, point2)
+		return get_2d_vector_angle(vector.subtract(point2, point1))
+	end
+
+	--navigate directly to target point.
+	function snap_to_point(target_xpos, target_ypos, tolerance)
+
+		local my_mob_data = get_my_position_and_speed()	
+
+		local position_tolerance = tolerance --tolerance between current and target position
+		local angle_tolerance = 0.05*math.pi --radians. tolerated distance between heading and target direction to choose new direction
+		local two_radians = 2*math.pi
+		--amount of time to walk. 
+		--Coefficient < 1 guarantees convergence to target
+		local step_time = 0.95*position_tolerance/my_mob_data['speed'] 
+		local running = false
+		local delta = math.sqrt(math.pow(my_mob_data['x'] - target_xpos, 2) + math.pow(my_mob_data['y'] - target_ypos, 2))
+		while(delta > position_tolerance) do
+			if(delta < 1) then
+				windower.ffxi.toggle_walk(true)
+			end
+			my_mob_data = get_my_position_and_speed()
+			delta = math.sqrt(math.pow(my_mob_data['x'] - target_xpos, 2) + math.pow(my_mob_data['y'] - target_ypos, 2))
+			local direction = angle_of_vector_between_two_points(V({my_mob_data['x'], my_mob_data['y']}), V({target_xpos, target_ypos}))
+			if((not running) or (math.abs(((-my_mob_data.heading) % two_radians) - (direction % two_radians)) > angle_tolerance)) then
+				windower.ffxi.run(target_xpos - my_mob_data['x'], target_ypos - my_mob_data['y'])
+				--windower.ffxi.run(direction)
+				running = true
+			end
+			coroutine.sleep(step_time)
+		end
+		running = false
+		windower.ffxi.toggle_walk(false)
+		windower.ffxi.run(false)
+	end
 end
 
 local anti_gm
@@ -141,23 +203,19 @@ do
 		session.geofence.heading_tolerance = settings.anti_gm.heading_tolerance --radian equivalent of 15 degrees
 	end
 	
-	local function act_natural()
-		--say a random number of question marks
-		math.randomseed(os.time())
-		math.random(); math.random(); math.random()
-		local say_message = string.rep('?',math.floor(math.random()*5+1))
-		local say_delay = tostring(settings.anti_gm.gm_response_chat_delay)
-		windower.send_command('/echo scheduling /say in ' .. say_delay .. 'sec...;wait ' .. say_delay .. ';input /say ' .. say_message)
-		
-		--move around in a cute circle a few times
-		coroutine.sleep(3)
-		local path = {0, math.pi/2, math.pi, -math.pi/2}
-		for i=1,(8*#path-1) do
-			local duration = 0.1 + math.random()*0.4
-			coroutine.sleep(duration)
-			windower.ffxi.run(path[(i % #path) + 1])
-		end
-		windower.ffxi.run(false)
+	--returns character to its initial position upon starting to fish
+	local function no_hoe_check()
+		local initial_position = session.geofence.center
+		local initial_heading = session.geofence.initial_heading
+		stop_fishing('Geofence broken')
+		message('Returning to fishing spot in 5...')
+		coroutine.sleep(5)
+		snap_to_point(initial_position.x, initial_position.y, 0.1)
+		message('Resuming fishing in 3...')
+		coroutine.sleep(1)
+		windower.ffxi.turn(initial_heading)
+		coroutine.sleep(1)
+		windower.send_command('hf start')
 	end
 	
 	local function anti_gm_alert_on_screen(alert_text)
@@ -173,10 +231,9 @@ do
 	function on_geofence_break()
 		message('[Anti-GM] YOU HAVE MOVED!', MESSAGE_ERROR)
 		anti_gm_alert_on_screen('YOU HAVE MOVED!')
-		session.geofence = nil
-		stop_fishing('geofence broken')
 		press_key('escape') --TODO: end ongoing fishing with packet injection.
-		act_natural()
+		--act_natural()
+		no_hoe_check()
 	end
 	
 	--assumes radians
@@ -413,7 +470,7 @@ local function start_fishing(catch_limit)
         end
 		if(settings.anti_gm.anti_gm_enabled) then
 			set_geofence()
-			message('[Anti-GM] geofence enabled.')
+			message('[Anti-GM] No-hoe-check mode engaged.')
 		end
         update_fatigue()
         coroutine.schedule(function () input_fish_command(coroutine_key) end, 0)
@@ -452,6 +509,11 @@ do
         end
 		--Bee: On ASB, this is floored after multiplication by 20. On horizon, they subtract 1.
 		local horizon_stamina_depletion = math.floor(stamina_depletion * 20 - 1)
+		
+		--Bee: As of the 2023-10-27 patch, this fix is necessary for some fish.
+		if(item.id == 4401 or item.id == 90) then
+			horizon_stamina_depletion = horizon_stamina_depletion + 1
+		end
         return table.concat({stamina, math.min(arrow_duration, 15), math.min(arrow_frequency, 15), horizon_stamina_depletion, size}, ',')
     end
 
@@ -567,7 +629,7 @@ windower.register_event('incoming chunk', function (id, original)
     elseif id == 0x115 then
 		--Stamina, arrow duration, regen, arrow delay, fish attack, miss regen, delay, size (1=big), special
         local fishing_parameters = {string.unpack(original, 'HHHHHHHHI', 5)}
-        message(string.format('params: ' .. table.concat(fishing_parameters, ', ')), MESSAGE_INFO)
+        message(string.format('params: ' .. table.concat(fishing_parameters, ', ')), MESSAGE_DEBUG)
         if check_equipment() then
             local catch = false
             local identified = identify_hooked_item(fishing_parameters)
@@ -576,7 +638,12 @@ windower.register_event('incoming chunk', function (id, original)
                 if item.count then
                     message(string.format('hooked = %s x%d', item.name, item.count), MESSAGE_WARN)
                 else
-                    message(string.format('hooked = %s', item.name), MESSAGE_WARN)
+					if(item.name == 'unknown') then
+						message(string.format('%s (%s)', item.name, table.concat(fishing_parameters, ', ')), MESSAGE_WARN)
+					else
+						message(string.format('hooked = %s', item.name), MESSAGE_WARN)
+					end
+                    
                 end
                 if session.running and not catch then
                     if session.item_by_id[item.id] then catch = true end
