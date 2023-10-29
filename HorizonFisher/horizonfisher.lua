@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.7.1'
+_addon.version = '0.7.2'
 _addon.commands = {'horizonfisher', 'hf'}
 
 -- built-in libraries
@@ -508,12 +508,9 @@ do
             stamina_depletion = stamina_depletion * legendary_mod / 100
         end
 		--Bee: On ASB, this is floored after multiplication by 20. On horizon, they subtract 1.
-		local horizon_stamina_depletion = math.floor(stamina_depletion * 20 - 1)
+		--Bee: As of 2023-10-28, they no longer subtract 1. 
+		local horizon_stamina_depletion = math.floor(stamina_depletion * 20)
 		
-		--Bee: As of the 2023-10-27 patch, this fix is necessary for some fish.
-		if(item.id == 4401 or item.id == 90) then
-			horizon_stamina_depletion = horizon_stamina_depletion + 1
-		end
         return table.concat({stamina, math.min(arrow_duration, 15), math.min(arrow_frequency, 15), horizon_stamina_depletion, size}, ',')
     end
 

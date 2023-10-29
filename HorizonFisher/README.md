@@ -192,6 +192,9 @@ The above can be enabled by setting `anti_gm_enabled` to true in the settings XM
 
 ## Changelog
 
+0.7.2
+* As of 2023-10-28, Horizon no longer subtracts 1 from the stamina depletion parameter. This hotfix deals with it.
+
 0.7.1
 * Shortened the addon name in messages.
 * Fishing params appear alongside "unknown" messages
