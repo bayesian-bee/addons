@@ -189,8 +189,18 @@ The above can be enabled by setting `anti_gm_enabled` to true in the settings XM
 
 **Remember, this may not prevent you from being suspended or banned if you are caught botting.** All botting is at your own risk, and the best way to avoid getting caught is to bot less.
 
+# Development & Maintenence
+
+## The path to 1.0
+
+* A visualizer that displays fish catches similar to how neuronal action potentials look on a voltage trace, and fish per hour. 
+* Logging of cast outcomes with timestamps (real time and full ingame time)
 
 ## Changelog
+
+0.7.3
+* Updated data for ryugu titan and titanic sawfish
+* Added an as-of-yet unused per-zone fishing message offset map to data.lua.
 
 0.7.2
 * As of 2023-10-28, Horizon no longer subtracts 1 from the stamina depletion parameter. This hotfix deals with it.
