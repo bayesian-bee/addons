@@ -176,7 +176,9 @@ Here are the available advanced settings:
 | `debug_messages` | Specifies if debug messages should be output to the chat log. | false |
 | `alert_command` | A string that will be passed to `windower.send_command` when fisher stops automatically. *An empty string will disable this feature.* | *empty string* |
 
-### Anti-GM
+## Anti-GM
+
+### Geofence mode ("No-hoe-check mode")
 
 This bot can react to meddling GMs! On HorizonXI, GMs rotate or reposition characters suspected of fishbotting to see how they react. This addon detects movement and rotation using a [geofence](https://en.wikipedia.org/wiki/Geo-fence) that is checked on each incoming packet. If your character is moved outside of the geofence boundary or is rotated by a sufficiently large angle, the following takes place:
 * The player is alerted with a message in the log and a highly-visible on-screen alert. The alert can be dismissed with `//horizonfisher dismiss`.
@@ -185,9 +187,15 @@ This bot can react to meddling GMs! On HorizonXI, GMs rotate or reposition chara
 * The bot returns to the position they were in when `horizonfisher start` was called.
 * The bot resumes fishing.
 
-The above can be enabled by setting `anti_gm_enabled` to true in the settings XML file. If you are using an older version of horizonfisher, please delete your settings file and let the addon regenerate a new one, then set `anti_gm_enabled` to true and restart the addon.
+The above can be enabled by setting the `<enabled>` tag under the `<geofence>` tag to `true`. to true in the settings XML file. If you are using an older version of horizonfisher, please delete your settings file and let the addon regenerate a new one, then set the tags as above and restart the addon.
 
 **Remember, this may not prevent you from being suspended or banned if you are caught botting.** All botting is at your own risk, and the best way to avoid getting caught is to bot less.
+
+### Dry detection [BETA]
+
+Continuing to fish into an empty pool for several minutes is supicious. With dry detection enabled, the bot will stop fishing after it fails to catch a target fish X times. You can set X with the `<no_catch_limit>` tag in the settings file.
+
+The above can be enabled by setting the `<enabled>` tag under the `<dry_detection>` tag to `true`. to true in the settings XML file. If you are using an older version of horizonfisher, please delete your settings file and let the addon regenerate a new one, then set the tags as above and restart the addon.
 
 # Development & Maintenence
 
