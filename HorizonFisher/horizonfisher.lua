@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.7.3'
+_addon.version = '0.8.0'
 _addon.commands = {'horizonfisher', 'hf'}
 
 -- built-in libraries
@@ -46,7 +46,7 @@ do
         session = {
             running=false, coroutine_key=math.random(),
             item_by_id={}, bait_by_id={},
-            catch_limit=0, no_hook=0,
+            catch_limit=0,
         }
     end
 
@@ -57,17 +57,22 @@ do
         release_delay=3, catch_delay_min=3, catch_delay_tweak=15, recast_delay=3,
         fatigue_start=os.date('!%Y-%m-%d', os.time() + 9 * 60 * 60), fatigue_count=0,
 		display_fatigue_info=false,
-        no_hook_max=20, debug_messages=false, alert_command='',
+        debug_messages=false, alert_command='',
 		anti_gm = {
-			anti_gm_enabled = false,
 			alert_box = {
 				pos={x=100,y=200}, 
 				bg={alpha=255,red=180,green=0,blue=0},
 				text={size=72,alpha=255,red=255,green=255,blue=255},
 			},
-			heading_tolerance = 0.25,
-			geofence_radius = 3,
-			gm_response_chat_delay = 8,
+			geofence = {
+				enabled = false,
+				heading_tolerance = 0.25,
+				radius = 3,
+			},
+			dry_detection = {
+				enabled = false,
+				no_catch_limit=6,
+			},
 		}
     }
 
@@ -106,8 +111,11 @@ local function stop_fishing(reason)
     if session.running then
         session.running = false
         session.coroutine_key = math.random()
-		if(settings.anti_gm.anti_gm_enabled) then
+		if(settings.anti_gm.geofence.enabled) then
 			session.geofence = nil
+		end
+		if(settings.anti_gm.dry_detection.enabled) then
+			session.dry_detection = nil
 		end
         if reason then
             message(string.format('stopped automated fishing (%s)', reason), MESSAGE_ERROR)
@@ -182,7 +190,7 @@ do
 	end
 end
 
-local anti_gm
+local geofence
 do
 	local alert_box = texts.new(settings.anti_gm.alert_box)
 	
@@ -198,9 +206,9 @@ do
 		session.geofence = {}
 		session.geofence.zone = windower.ffxi.get_info().zone
 		session.geofence.center = {x=player_data.x, y=player_data.y, z=player_data.z}
-		session.geofence.radius = settings.anti_gm.geofence_radius
+		session.geofence.radius = settings.anti_gm.geofence.radius
 		session.geofence.initial_heading = player_data.heading
-		session.geofence.heading_tolerance = settings.anti_gm.heading_tolerance --radian equivalent of 15 degrees
+		session.geofence.heading_tolerance = settings.anti_gm.geofence.heading_tolerance --radian equivalent of 15 degrees
 	end
 	
 	--returns character to its initial position upon starting to fish
@@ -260,6 +268,93 @@ do
 		end
 	end
 	
+end
+
+local dry_detection
+do
+	
+	local function vanadiel_minutes_to_real_seconds(vanadiel_minutes)
+		return vanadiel_minutes*((57*60+36)/(60*24)) --seconds in a vana day / min in a real day
+	end
+	--This is when ASB restocks: 0,4,6,7,17,18,20
+	function get_next_restock_vanadiel_time(current_time)
+		if (current_time > (0*60)) and (current_time <= (4*60)) then
+			return 4*60
+		elseif (current_time > (4*60)) and (current_time <= (6*60)) then
+			return 6*60
+		elseif (current_time > (6*60)) and (current_time <= (7*60)) then
+			return 7*60
+		elseif (current_time > (7*60)) and (current_time <= (17*60)) then
+			return 17*60
+		elseif (current_time > (18*60)) and (current_time <= (20*60)) then
+			return 20*60
+		else
+			return 24*60
+		end
+	end
+	
+	function initialize_dry_detection()
+		session.dry_detection = {}
+		session.dry_detection.no_catch_count = 0
+		session.dry_detection.last_cast_time = nil
+	end
+	
+	function is_dry()
+		return session.dry_detection.no_catch_count >= settings.anti_gm.dry_detection.no_catch_limit
+	end
+	
+	function should_reset_no_catch_count()
+		local ingame_time = windower.ffxi.get_info().time
+		if(session.dry_detection.last_cast_time) then
+			local restock_after_cast = get_next_restock_vanadiel_time(session.dry_detection.last_cast_time)
+			message(
+				string.format('Current ingame time: %s, next restock time: %s', ingame_time, restock_after_cast),
+				MESSAGE_DEBUG
+			)
+		end
+		if session.dry_detection.last_cast_time 
+			and (ingame_time >= get_next_restock_vanadiel_time(session.dry_detection.last_cast_time) 
+				or (ingame_time < 60 and get_next_restock_vanadiel_time(session.dry_detection.last_cast_time)==(24*60))) then
+			return true
+		else
+			return false
+		end
+	end
+	
+	function reset_no_catch_count()
+		session.dry_detection.no_catch_count = 0
+	end
+	
+	function increment_no_catch_count()
+		session.dry_detection.no_catch_count = session.dry_detection.no_catch_count + 1
+	end
+	
+	function get_delay_until_restock()
+		local ingame_time = windower.ffxi.get_info().time
+		local ingame_hour = math.floor(ingame_time/60)
+		local next_restock_time = get_next_restock_vanadiel_time(ingame_time)
+		return vanadiel_minutes_to_real_seconds(next_restock_time - ingame_time)
+	end
+	
+	function schedule_delay_notifications(delay, restock_time)
+		-- i cannot defeat lazy eval
+		-- TODO(Bee): learn to code
+		--
+		-- local remaining_delay = math.floor(delay)
+		-- local message_delay = 0
+		-- local message_string = ''
+		-- while(remaining_delay > 0) do
+			-- message_string = 'Casting in ' .. tostring(remaining_delay) .. ' sec...'
+			-- coroutine.schedule(
+				-- function () a = (session.running and message(message_string, MESSAGE_INFO) or nil) end,
+				-- message_delay
+			-- )
+			-- remaining_delay = remaining_delay - 30
+			-- message_delay = message_delay + 30
+		-- end
+		local vana_hours = restock_time/60
+		message(string.format('Awaiting restock @ %d:00...', vana_hours), MESSAGE_INFO)
+	end
 end
 
 local get_equipped_item_id
@@ -380,17 +475,16 @@ do
             end
         end
         if coroutine_key == session.coroutine_key and cast_attempt >= settings.cast_attempt_max then
-			message('why are we here: ' .. tostring(cast_attempt) .. ' ' .. tostring(settings.cast_attempt_max) .. ' ' .. tostring(coroutine_key == session.coroutine_key))
             stop_fishing('unable to cast')
         end
     end
 end
 
-local function schedule_cast()
-    message(string.format('casting in %d seconds', settings.recast_delay))
+local function schedule_cast(cast_delay)
+    message(string.format('casting in %d seconds', cast_delay))
     local coroutine_key = math.random()
     session.coroutine_key = coroutine_key
-    coroutine.schedule(function () input_fish_command(coroutine_key) end, settings.recast_delay)
+    coroutine.schedule(function () input_fish_command(coroutine_key) end, cast_delay)
 end
 
 local function stop_cast_attempts()
@@ -433,46 +527,25 @@ local function schedule_release()
     coroutine.schedule(function () send_fishing_action(200, 0, coroutine_key) end, settings.release_delay)
 end
 
-local function update_fatigue(relative, value)
-    local now = os.time() + 9 * 60 * 60
-    local today = os.date('!%Y-%m-%d', now)
-    now = os.date('!*t', now)
-    if settings.fatigue_start ~= today then
-        settings.fatigue_start = today
-        settings.fatigue_count = 0
-        config.save(settings, 'all')
-    end
-    if value then
-        if relative then
-            settings.fatigue_count = math.max(settings.fatigue_count + value, 0)
-        else
-            settings.fatigue_count = value
-        end
-        config.save(settings, 'all')
-    end
-    local reset = (24 * 60) - (now.hour * 60 + now.min)
-	if(settings.display_fatigue_info) then
-		message(string.format('fishing fatigue = %d/200, resets in %dh%dm', settings.fatigue_count, math.floor(reset / 60), reset % 60))
-	end
-end
-
 local function start_fishing(catch_limit)
     if not session.running and windower.ffxi.get_player().status == 0 then
         session.running = true
         local coroutine_key = math.random()
         session.coroutine_key = coroutine_key
         session.catch_limit = tonumber(catch_limit) or 0
-        session.no_hook = 0
         if session.catch_limit > 0 then
             message(string.format('started automated fishing (catch limit = %d)', session.catch_limit), MESSAGE_WARN)
         else
             message('started automated fishing', MESSAGE_WARN)
         end
-		if(settings.anti_gm.anti_gm_enabled) then
+		if(settings.anti_gm.geofence.enabled) then
 			set_geofence()
 			message('[Anti-GM] No-hoe-check mode engaged.')
 		end
-        update_fatigue()
+		if(settings.anti_gm.dry_detection.enabled) then
+			initialize_dry_detection()
+			message('[Anti-GM] Dry-detection enabled.')
+		end
         coroutine.schedule(function () input_fish_command(coroutine_key) end, 0)
     end
 end
@@ -490,6 +563,7 @@ do
             arrow_frequency = math.floor(arrow_frequency * count_mod)
         end
         local size = item.size or 0
+		--Bee: size mod is neither 0 nor 1 for shanger+ebisu.
         if size_mod == 0 and size == 1 then
             arrow_duration = math.max(arrow_duration - 1, 1)
             arrow_frequency = arrow_frequency + 2
@@ -509,9 +583,11 @@ do
         end
 		--Bee: On ASB, this is floored after multiplication by 20. On horizon, they subtract 1.
 		--Bee: As of 2023-10-28, they no longer subtract 1. 
+		--Bee: Discovered on 2023-11-13, 1 is subtracted from some fish only when using ebisu. 
 		local horizon_stamina_depletion = math.floor(stamina_depletion * 20)
 		
-        return table.concat({stamina, math.min(arrow_duration, 15), math.min(arrow_frequency, 15), horizon_stamina_depletion, size}, ',')
+		
+        return {stamina, math.min(arrow_duration, 15), math.min(arrow_frequency, 15), horizon_stamina_depletion, size}
     end
 
     local item_by_rod_and_uid = {}
@@ -523,10 +599,16 @@ do
             local rod_modifiers = data.rod_modifiers_by_id[range_id]
             for i = 1, #data.item_fishing_parameters do
                 local item = data.item_fishing_parameters[i]
-                local uid = make_uid(item, unpack(rod_modifiers))
-				message('uid ' .. tostring(i) .. ': ' .. uid, MESSAGE_DEBUG)
-                if not item_by_uid[uid] then item_by_uid[uid] = {} end
-                table.insert(item_by_uid[uid], item)
+                local uid_table = make_uid(item, unpack(rod_modifiers))
+				--Bee: Universal parameter offset fix on Horizon XI
+				--Adds both an item's parameters, and the parameters offset by 1.
+				local uid_string1 = table.concat(uid_table, ',')
+				if not item_by_uid[uid_string1] then item_by_uid[uid_string1] = {} end
+				table.insert(item_by_uid[uid_string1], item)
+				uid_table[4] = uid_table[4] - 1
+				local uid_string2 = table.concat(uid_table, ',')
+                if not item_by_uid[uid_string2] then item_by_uid[uid_string2] = {} end
+				table.insert(item_by_uid[uid_string2], item)
             end
             item_by_rod_and_uid[range_id] = item_by_uid
             message('item uid cache updated: ' .. range_id, MESSAGE_DEBUG)
@@ -567,11 +649,11 @@ windower.register_event('action', function (action)
 end)
 
 windower.register_event('incoming chunk', function (id, original)
-	if(settings.anti_gm.anti_gm_enabled) then
+	if(settings.anti_gm.geofence.enabled) then
 		check_geofence()
 	end
 	if id == 0x00A then --zone
-		if(session.running and settings.anti_gm.anti_gm_enabled and session.geofence) then
+		if(session.running and settings.anti_gm.geofence.enabled and session.geofence) then
 			if(session.geofence.zone == windower.ffxi.get_info().zone) then
 				on_geofence_break()
 			else
@@ -587,15 +669,16 @@ windower.register_event('incoming chunk', function (id, original)
             stop_fishing('zone change')
         end
     elseif id == 0x017 then
-        if string.byte(original, 6) % 2 == 1 then
+        if string.byte(original, 6) % 2 == 1 and res.chat(string.byte(original, 1)) then
             stop_fishing('chat message from gm')
         end
+	--status flags defined here: https://github.com/AirSkyBoat/AirSkyBoat/blob/3b961762066e259cbc42c62732ca86c2a6aea8a0/src/map/entities/baseentity.h#L4
     elseif id == 0x037 then
+		local dry_detection_enabled = settings.anti_gm.dry_detection.enabled
         local player_status = windower.ffxi.get_player().status
         if session.player_status == player_status then return end
         message(string.format('player status update: %d, %d', player_status, string.byte(original, 75)), MESSAGE_DEBUG)
         if player_status == 58 or player_status == 61 then
-            update_fatigue('+', 1)
             if session.running and session.catch_limit > 0 then
                 session.catch_limit = session.catch_limit - 1
                 if session.catch_limit > 0 then
@@ -606,18 +689,78 @@ windower.register_event('incoming chunk', function (id, original)
             end
         end
         if session.running then
-            if player_status == 0 then
-                schedule_cast()
+			--idle
+            if player_status == 0 and dry_detection_enabled then
+				--reset dryness counter on restock
+				if(should_reset_no_catch_count()) then
+					message(
+						string.format('Resetting no_catch_count (was %d)', session.dry_detection.no_catch_count), 
+						MESSAGE_DEBUG
+					)
+					reset_no_catch_count()
+				end
+				if(session.dry_detection.last_cast_time) then
+					message(
+						string.format('Resetting last_cast_time (was %d:%d)', 
+							math.floor(session.dry_detection.last_cast_time/60), 
+								session.dry_detection.last_cast_time % 60
+							), 
+						MESSAGE_DEBUG
+					)
+				else
+					message('Setting last cast time.')
+				end
+				session.dry_detection.last_cast_time = nil
+				--check for dryness
+				if(is_dry()) then
+					message(
+						string.format('Dryness detected! (%d no-catches in a row)', 
+							session.dry_detection.no_catch_count
+						),
+						MESSAGE_ERROR
+					)
+					local delayed_cast_time = get_delay_until_restock()
+					local next_restock = get_next_restock_vanadiel_time(windower.ffxi.get_info().time)
+					schedule_delay_notifications(delayed_cast_time, next_restock)
+					schedule_cast(delayed_cast_time)
+				else
+					schedule_cast(settings.recast_delay)
+				end
+			--idle
+			elseif player_status == 0 then
+				schedule_cast(settings.recast_delay)
+			--rod in water and previously idle
+			elseif player_status == 56 and session.player_status == 0 
+					and dry_detection_enabled then
+				session.dry_detection.last_cast_time = windower.ffxi.get_info().time
+				message(
+					string.format('Setting last cast time to %d:%d', 
+						math.floor(session.dry_detection.last_cast_time/60), 
+							session.dry_detection.last_cast_time % 60
+						), 
+					MESSAGE_DEBUG
+				)
+				stop_cast_attempts()
+			--rod in water nothing on hook
             elseif player_status == 56 then
                 stop_cast_attempts()
-            elseif player_status == 57 then
-                session.no_hook = 0
-            elseif player_status == 62 and session.player_status ~= 57 then
-                session.no_hook = session.no_hook + 1
-                message(string.format('no item hooked: %d, %d', session.no_hook, settings.no_hook_max), MESSAGE_DEBUG)
-                if settings.no_hook_max > 0 and session.no_hook >= settings.no_hook_max then
-                    stop_fishing('no hook limit')
-                end
+			--reeling back a catch
+			elseif player_status == 58 then
+				if(dry_detection_enabled) then
+					reset_no_catch_count()
+				end
+				--table.insert(state.visualizer.catch_times, os.time())
+			--reeling back without a catch
+            elseif player_status == 62 and session.player_status ~= 58
+					and settings.anti_gm.dry_detection.enabled then
+				increment_no_catch_count()
+				message(
+					string.format('Incrementing no_catch_count (%d/%d)', 
+						session.dry_detection.no_catch_count, 
+						settings.anti_gm.dry_detection.no_catch_limit
+					), 
+					MESSAGE_DEBUG
+				)
             elseif not (player_status >= 56 and player_status <= 62 or player_status == 0) then
                 stop_fishing('invalid player status')
             end
@@ -775,15 +918,6 @@ do
         end
     end
 
-    local function command_fatigue(value)
-        if not value then
-            update_fatigue()
-        else
-            local operation = string.sub(value, 1, 1)
-            update_fatigue(operation == '+' or operation == '-', tonumber(value))
-        end
-    end
-
     windower.register_event('addon command', function (command, ...)
         command = string.lower(command)
         local argument = string.lower(table.concat({...}, ' '))
@@ -798,8 +932,6 @@ do
             command_remove(argument)
         elseif command == 'list' then
             command_list()
-        elseif command == 'fatigue' then
-            command_fatigue(argument)
 		elseif command == 'dismiss' then
 			clear_alert()
 		elseif command == 'test'  then

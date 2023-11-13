@@ -195,8 +195,20 @@ The above can be enabled by setting `anti_gm_enabled` to true in the settings XM
 
 * A visualizer that displays fish catches similar to how neuronal action potentials look on a voltage trace, and fish per hour. 
 * Logging of cast outcomes with timestamps (real time and full ingame time)
+* Turbo mode, which reduces catch times to the observed minimum. 
 
 ## Changelog
+
+0.8.0
+* BETA: Added dry detection, a GM countermeasure that pauses fishing until pools are restocked when hooks are slow.
+	* Known issue: The no-catch counter doesn't always reset when restocks happen.
+* Added universal parameter offset fix (aka Universal Ebisu Fix).
+* Reorganized anti-gm blocks in settings.xml.
+* Server messages no longer stop horizonfisher. 
+* Removed the fatigue command, and fatigue information from settings.xml.
+* Removed the legacy no_hook_max functionality.
+* Removed extraneous UID enumerating debug messages
+* Fixed Titanictus, Gugrusaurus, Titanic Sawfish, and Ryugu Titan, Gigant Squid (for real i hope)
 
 0.7.3
 * Updated data for ryugu titan and titanic sawfish
