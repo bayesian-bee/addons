@@ -131,27 +131,17 @@ Automatic fishing will also stop under the following conditions:
 
 When fisher is loaded but the automatic fishing is not started it will still track fishing fatigue and display the name of the catches you hook.
 
-## Viewing Tracked Fishing Fatigue
+## Adjusting catch time parameters
 
-> Your tracked fishing fatigue may be inaccurate if you do any fishing without fisher loaded.
-
-> Modifying your tracked fishing fatigue will not allow you to exceed the actual fishing fatigue limit.
+Horizonfisher will automaticaly calculate the amount of time it takes to reel in a fish based on the fishing minigame parameters sent by the server. However, you can control that calculation by specifying a minimum, maximum, and 
 
 ```
-//horizonfisher fatigue [modifier]
+//hf catch_delay_min 3
+//hf catch_delay_tweak 15
+//hf catch_delay_max 30
 ```
 
-When a `modifier` is not provided this command will display your current amount of tracked fishing fatigue.
-If one is provided it will modify or overwrite the amount of tracked fishing fatigue.
-
-Here are some examples:
-
-```
-//horizonfisher fatigue
-//horizonfisher fatigue +10
-//horizonfisher fatigue -10
-//horizonfisher fatigue 123
-```
+The effects of these settings are described below.
 
 ## Advanced Settings
 
@@ -171,6 +161,7 @@ Here are the available advanced settings:
 | `release_delay` | The amount of time in seconds to wait before releasing a hooked item that's not in your catch list. | 3 |
 | `catch_delay_min` | The minimum amount of time in seconds to wait before reeling in a hooked item. | 3 |
 | `catch_delay_tweak` | The catch delay for fish near your level, which will be adjusted based on the difference between player skill and fish level. | 15 |
+| `catch_delay_max` | The maximum amount of time in seconds to wait before reeling in a hooked item. | 30 |
 | `recast_delay` | The amount of time in seconds to wait after fishing ends to recast your fishing rod. | 3 |
 | `no_hook_max` | The number of consecutive "You didn't catch anything" messages before automatic fishing is stopped. *A value of zero will disable this feature.* | 20 |
 | `debug_messages` | Specifies if debug messages should be output to the chat log. | false |
@@ -206,6 +197,12 @@ The above can be enabled by setting the `<enabled>` tag under the `<dry_detectio
 * Turbo mode, which reduces catch times to the observed minimum. 
 
 ## Changelog
+
+0.8.1
+* No longer gives an error when the server prints a message.
+* Added `catch_delay_max`, `catch_delay_min`, and `catch_delay_tweak` comamnds.
+* Removed extraneous fatigue-related configuration variables.
+* Fixed Lik.
 
 0.8.0
 * BETA: Added dry detection, a GM countermeasure that pauses fishing until pools are restocked when hooks are slow.

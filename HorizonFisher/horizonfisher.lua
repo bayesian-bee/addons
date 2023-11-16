@@ -22,7 +22,7 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 _addon.name = 'HorizonFisher'
 _addon.author = 'Seth VanHeulen, Bee'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.8.0'
+_addon.version = '0.8.1'
 _addon.commands = {'horizonfisher', 'hf'}
 
 -- built-in libraries
@@ -38,6 +38,7 @@ local config = require('config')
 require('pack')
 -- local libraries
 local data = require('data')
+res = require 'resources'
 
 local session
 local settings
@@ -54,9 +55,7 @@ do
 
     local defaults = {
         equip_delay=2, move_delay=0, cast_attempt_delay=4, cast_attempt_max=10,
-        release_delay=3, catch_delay_min=3, catch_delay_tweak=15, recast_delay=3,
-        fatigue_start=os.date('!%Y-%m-%d', os.time() + 9 * 60 * 60), fatigue_count=0,
-		display_fatigue_info=false,
+        release_delay=3, catch_delay_min=3, catch_delay_tweak=15, catch_delay_max=30, recast_delay=3,
         debug_messages=false, alert_command='',
 		anti_gm = {
 			alert_box = {
@@ -507,7 +506,7 @@ do
         if regen_per_second < 0 then
             catch_delay = math.min(math.abs(fishing_parameters[1] / regen_per_second), catch_delay)
         end
-        return math.max(settings.catch_delay_min, catch_delay)
+        return math.min(settings.catch_delay_max, math.max(settings.catch_delay_min, catch_delay))
     end
 
     function schedule_catch(fishing_parameters)
@@ -669,7 +668,7 @@ windower.register_event('incoming chunk', function (id, original)
             stop_fishing('zone change')
         end
     elseif id == 0x017 then
-        if string.byte(original, 6) % 2 == 1 and res.chat(string.byte(original, 1)) then
+        if string.byte(original, 6) % 2 == 1 and res.chat[string.byte(original, 1)] then
             stop_fishing('chat message from gm')
         end
 	--status flags defined here: https://github.com/AirSkyBoat/AirSkyBoat/blob/3b961762066e259cbc42c62732ca86c2a6aea8a0/src/map/entities/baseentity.h#L4
@@ -800,11 +799,6 @@ windower.register_event('incoming chunk', function (id, original)
     end
 end)
 
-local function test()
-	local player_data = windower.ffxi.get_mob_by_id(windower.ffxi.get_player().id)
-	message(tostring(player_data.heading))
-end
-
 windower.register_event('outgoing chunk', function (id, original, _, injected)
     if id == 0x01A then
         local action_category = string.byte(original, 11)
@@ -917,13 +911,27 @@ do
             message('no bait set to use', MESSAGE_ERROR)
         end
     end
-
+	
+	local function set_catch_delay_max(value)
+		settings.catch_delay_max = tonumber(value)
+		message('Set \'catch_delay_max\' set to ' .. value, MESSAGE_INFO)
+	end
+	
+	local function set_catch_delay_min(value)
+		settings.catch_delay_min = tonumber(value)
+		message('Set \'catch_delay_min\' set to ' .. value, MESSAGE_INFO)
+	end
+	
+	local function set_catch_delay_tweak(value)
+		settings.catch_delay_tweak = tonumber(value)
+		message('Set \'catch_delay_tweak\' set to ' .. value, MESSAGE_INFO)
+	end
     windower.register_event('addon command', function (command, ...)
         command = string.lower(command)
         local argument = string.lower(table.concat({...}, ' '))
         if #argument == 0 then argument = nil end
         if command == 'start' then
-            start_fishing(argument)
+            start_fishing()
         elseif command == 'stop' then
             stop_fishing()
         elseif command == 'add' then
@@ -934,8 +942,12 @@ do
             command_list()
 		elseif command == 'dismiss' then
 			clear_alert()
-		elseif command == 'test'  then
-			test()
+		elseif command == 'catch_delay_max' then
+			set_catch_delay_max(argument)
+		elseif command == 'catch_delay_min' then
+			set_catch_delay_min(argument)
+		elseif command == 'catch_delay_tweak' then
+			set_catch_delay_tweak(argument)
         end
     end)
 end

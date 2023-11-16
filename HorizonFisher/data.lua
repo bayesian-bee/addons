@@ -193,7 +193,7 @@ data.item_fishing_parameters = {
     {name='mola mola', id=5134, stamina=85, arrow_duration=15, arrow_frequency=12, stamina_depletion=16, size=1, legendary=1},
     {name='gerrothorax', id=5471, stamina=85, arrow_duration=7, arrow_frequency=7, stamina_depletion=29, size=1, legendary=1},
     {name='gugrusaurus', id=5127, stamina=85, arrow_duration=7, arrow_frequency=5, stamina_depletion=39, size=1, legendary=1},
-    {name='lik', id=5129, stamina=88, arrow_duration=3, arrow_frequency=14, stamina_depletion=48, size=1, legendary=1},
+    {name='lik', id=5129, stamina=85, arrow_duration=3, arrow_frequency=14, stamina_depletion=48, size=1, legendary=1},
     {name='shen', id=5997, stamina=88, arrow_duration=15, arrow_frequency=2, stamina_depletion=74, size=1, legendary=1},
     {name='kokuryu', id=5540, stamina=89, arrow_duration=5, arrow_frequency=8, stamina_depletion=36, size=1, legendary=1},
     {name='soryu', id=5537, stamina=89, arrow_duration=13, arrow_frequency=3, stamina_depletion=33, size=1, legendary=1},
