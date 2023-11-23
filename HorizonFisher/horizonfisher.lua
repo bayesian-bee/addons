@@ -20,9 +20,9 @@ along with fisher.  If not, see <https://www.gnu.org/licenses/>.
 -- luacheck: std lua51, globals _addon windower
 
 _addon.name = 'HorizonFisher'
-_addon.author = 'Seth VanHeulen, Bee'
+_addon.author = 'Bee (original addon written by Seth VanHeulen)'
 _addon.description = 'HorizonXI fishing bot.'
-_addon.version = '0.8.1'
+_addon.version = '0.8.2'
 _addon.commands = {'horizonfisher', 'hf'}
 
 -- built-in libraries

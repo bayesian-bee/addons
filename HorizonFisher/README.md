@@ -198,6 +198,9 @@ The above can be enabled by setting the `<enabled>` tag under the `<dry_detectio
 
 ## Changelog
 
+0.8.2
+* Updated addon author.
+
 0.8.1
 * No longer gives an error when the server prints a message.
 * Added `catch_delay_max`, `catch_delay_min`, and `catch_delay_tweak` comamnds.
