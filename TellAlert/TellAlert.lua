@@ -79,8 +79,8 @@ windower.register_event('chat message',function(message_text,player,mode,isGM)
     if mode==3 and state.alerts_enabled then
         display_alert(message_text, player, isGM)
 		if(isGM and not state.replied_to_gm) then 
+			--reply to GM here
 			state.replied_to_gm = true
-			auto_reply(player, 'Hello, officer. i was doing the speed limit', 6)
 		end
     end
 	if(isGM) then
