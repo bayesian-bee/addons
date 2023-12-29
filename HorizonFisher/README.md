@@ -1,26 +1,8 @@
-# A note about HorizonFisher
+# About HorizonFisher
 
-This version of fisher uses the fishing parameters and calculations that are specific to HorizonXI. It is not complete. If you would like to help with development, set `debug_messages` to `true` in horizonfisher/data/Charactername.xml so you can better report aberrant results to Bee.
+This is a fork of [fisher](https://gitlab.com/svanheulen/fisher) that uses the fishing parameters and calculations that are specific to HorizonXI. It is not complete. Please report any aberrant behavior, feature requests, or praise to [bayesian.bee@gmail.com](bayesian.bee@gmail.com).
 
-In particular, the fish_attack parameter of the rod is different on horizon, and some fish parameters are different. I've noted in the `rod_modifiers_by_id` table in data.lua which rod parameters have been fixed for horizon.
-
-This version also detects when your character is moved, or "zoned-in-place." See the bottom of this document for configurations.
-
-# The original fisher readme.
-
-## About Fisher
-
-Fisher is an automatic fishing bot for the fishing mini-game in Final Fantasy XI designed as an addon for [Windower 4](http://windower.net).
-
-This project is a complete rewrite of my old addon of the same name.
-
-## Known Issues
-
-### Private Servers
-
-~~Fisher **will _NOT_** work on private servers! This is due to the fact that private servers do not properly implement the fishing system on the server side. There is nothing that can be done to fisher to fix this. It's a problem with the server and needs to be fixed there.~~
-
-NOTE(Bee): =)
+Horizonfisher also includes GM-evasion functionality that attempts to thwart _some_ bot checks that Horizon GMs perform. It is also not complete.
 
 ### Display of Identified Fish
 
@@ -43,7 +25,7 @@ Automatic fishing will not start and fish/item identification will not work if a
 
 # Installation
 
-The latest stable version is always available here: https://svanheulen.gitlab.io/fisher/fisher.zip
+The latest stable version is always available [here](https://svanheulen.gitlab.io/fisher/fisher.zip).
 
 Extract the archive to your `addons` folder, which by default you can find inside the same folder as the `Windower.exe`.
 
@@ -52,9 +34,9 @@ Extract the archive to your `addons` folder, which by default you can find insid
 ## Load and Unload
 
 ```
-//lua load fisher
-//lua unload fisher
-//lua reload fisher
+//lua load horizonfisher
+//lua unload horizonfisher
+//lua reload horizonfisher
 ```
 
 ## Specify Catch and Bait
@@ -129,7 +111,7 @@ Automatic fishing will also stop under the following conditions:
 
 ## Without Automatic Fishing
 
-When fisher is loaded but the automatic fishing is not started it will still track fishing fatigue and display the name of the catches you hook.
+When horizonfisher is loaded but the automatic fishing is not started it will still track fishing fatigue and display the name of the catches you hook.
 
 ## Adjusting catch time parameters
 
@@ -180,11 +162,11 @@ This bot can react to meddling GMs! On HorizonXI, GMs rotate or reposition chara
 
 The above can be enabled by setting the `<enabled>` tag under the `<geofence>` tag to `true`. to true in the settings XML file. If you are using an older version of horizonfisher, please delete your settings file and let the addon regenerate a new one, then set the tags as above and restart the addon.
 
-**Remember, this may not prevent you from being suspended or banned if you are caught botting.** All botting is at your own risk, and the best way to avoid getting caught is to bot less.
+**Remember, this may not prevent you from being suspended or banned.** All botting is at your own risk, and the best way to avoid getting caught is to bot less, and to never bot away from your keyboard. Take it from me, as I lost a character doing this. :)
 
 ### Dry detection [BETA]
 
-Continuing to fish into an empty pool for several minutes is supicious. With dry detection enabled, the bot will stop fishing after it fails to catch a target fish X times. You can set X with the `<no_catch_limit>` tag in the settings file.
+Continuing to fish into an empty pool for several minutes is supicious, and seasoned non-botting fishermen will notice. With dry detection enabled, the bot will stop fishing after it fails to catch a target fish X times. You can set X with the `<no_catch_limit>` tag in the settings file.
 
 The above can be enabled by setting the `<enabled>` tag under the `<dry_detection>` tag to `true`. to true in the settings XML file. If you are using an older version of horizonfisher, please delete your settings file and let the addon regenerate a new one, then set the tags as above and restart the addon.
 
@@ -194,9 +176,12 @@ The above can be enabled by setting the `<enabled>` tag under the `<dry_detectio
 
 * A visualizer that displays fish catches similar to how neuronal action potentials look on a voltage trace, and fish per hour. 
 * Logging of cast outcomes with timestamps (real time and full ingame time)
-* Turbo mode, which reduces catch times to the observed minimum. 
+* Detection of AFK check messages.
 
 ## Changelog
+
+0.8.3
+* Updated readme
 
 0.8.2
 * Updated addon author.
